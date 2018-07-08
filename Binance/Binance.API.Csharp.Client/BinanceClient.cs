@@ -61,17 +61,19 @@ namespace Binance.API.Csharp.Client
             // Validating Trading Rules
             if (_tradingRules != null)
             {
-                var symbolInfo = _tradingRules.Symbols.Where(r => r.SymbolName.ToUpper() == symbol.ToUpper()).FirstOrDefault();
-                var priceFilter = symbolInfo.Filters.Where(r => r.FilterType == "PRICE_FILTER").FirstOrDefault();
-                var sizeFilter = symbolInfo.Filters.Where(r => r.FilterType == "LOT_SIZE").FirstOrDefault();
-
+                var symbolInfo = _tradingRules.Symbols.FirstOrDefault(r => r.SymbolName.ToUpper() == symbol.ToUpper());
+                
                 if (symbolInfo == null)
                 {
-                    throw new ArgumentException("Invalid symbol. ", "symbol");
+                    throw new ArgumentException("Invalid symbol. ", nameof(symbol));
                 }
+
+                var priceFilter = symbolInfo.Filters.FirstOrDefault(r => r.FilterType == "PRICE_FILTER");
+                var sizeFilter = symbolInfo.Filters.FirstOrDefault(r => r.FilterType == "LOT_SIZE");
+
                 if (quantity < sizeFilter.MinQty)
                 {
-                    throw new ArgumentException($"Quantity for this symbol is lower than allowed! Quantity must be greater than: {sizeFilter.MinQty}", "quantity");
+                    throw new ArgumentException($"Quantity for this symbol is lower than allowed! Quantity must be greater than: {sizeFilter.MinQty}", nameof(quantity));
                 }
                 if (icebergQty > 0m && !symbolInfo.IcebergAllowed)
                 {

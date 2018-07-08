@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Binance.API.Csharp.Client.Models.Enums;
 using System.Threading;
@@ -36,7 +37,13 @@ namespace Binance.API.Csharp.Client.Test
         [TestMethod]
         public void GetCandleSticks()
         {
-            var candlestick = binanceClient.GetCandleSticks("ethbtc", TimeInterval.Minutes_15, new System.DateTime(2017,11,24), new System.DateTime(2017, 11, 26)).Result;
+            var candlestick = binanceClient.GetCandleSticks("ethbtc", TimeInterval.Minutes_15, new System.DateTime(2018,07,07), new System.DateTime(2018, 07, 06)).Result;
+        }
+
+        [TestMethod]
+        public void GetCandleSticks_NoDate()
+        {
+            var candlestick = binanceClient.GetCandleSticks("ethbtc", TimeInterval.Minutes_15, null,null).Result;
         }
 
         [TestMethod]
