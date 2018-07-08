@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Configuration;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Binance.API.Csharp.Client.Models.Enums;
 using System.Threading;
 using Binance.API.Csharp.Client.Models.WebSocket;
@@ -8,7 +9,7 @@ namespace Binance.API.Csharp.Client.Test
     [TestClass]
     public class BinanceTest
     {
-        private static ApiClient apiClient = new ApiClient("@YourApiKey", "@YourApiSecret");
+        private static ApiClient apiClient = new ApiClient(ConfigurationManager.AppSettings["ApiKey"], ConfigurationManager.AppSettings["ApiSecret"]);
         private static BinanceClient binanceClient = new BinanceClient(apiClient,false);
 
         #region General
