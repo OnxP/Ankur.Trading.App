@@ -81,13 +81,13 @@ namespace Binance.API.Csharp.Client.Test
             var sellMarketOrder = binanceClient.PostNewOrder("ethbtc", 0.01m, 0m, OrderSide.SELL, OrderType.MARKET).Result;
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public void PostIcebergOrder()
         {
             var icebergOrder = binanceClient.PostNewOrder("ethbtc", 0.01m, 0m, OrderSide.BUY, OrderType.MARKET, icebergQty: 2m).Result;
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public void PostNewLimitOrderTest()
         {
             var testOrder = binanceClient.PostNewOrderTest("ethbtc", 1m, 0.1m, OrderSide.BUY).Result;
@@ -149,19 +149,19 @@ namespace Binance.API.Csharp.Client.Test
         #endregion
 
         #region User stream
-        [TestMethod]
+        [TestMethod, Ignore]
         public void StartUserStream()
         {
             var listenKey = binanceClient.StartUserStream().Result.ListenKey;
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public void KeepAliveUserStream()
         {
             var ping = binanceClient.KeepAliveUserStream("@ListenKey").Result;
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public void CloseUserStream()
         {
             var resut = binanceClient.CloseUserStream("@ListenKey").Result;
