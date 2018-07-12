@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Binance.API.Csharp.Client.T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ankur.Trading.Core", "Ankur.Trading.Core\Ankur.Trading.Core.csproj", "{57492D84-9761-440F-A5A6-ED9B7E51FC2E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ankur.Trading.Test", "Ankur.Trading.Test\Ankur.Trading.Test.csproj", "{BEC151D5-610C-4E57-A6FB-0A9E85CF31BA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{57492D84-9761-440F-A5A6-ED9B7E51FC2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57492D84-9761-440F-A5A6-ED9B7E51FC2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57492D84-9761-440F-A5A6-ED9B7E51FC2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEC151D5-610C-4E57-A6FB-0A9E85CF31BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEC151D5-610C-4E57-A6FB-0A9E85CF31BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEC151D5-610C-4E57-A6FB-0A9E85CF31BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEC151D5-610C-4E57-A6FB-0A9E85CF31BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

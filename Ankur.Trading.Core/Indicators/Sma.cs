@@ -11,10 +11,10 @@ namespace Ankur.Trading.Core.Indicators
     public class Sma
     {
         private IEnumerable<Candlestick> _candleSticks;
-        private IEnumerable<decimal> _sma;
+        public IEnumerable<decimal> sma;
         private int Length;
 
-        public decimal SmaValue => _sma.First();
+        public decimal SmaValue => sma.First();
         public decimal Gradient { get; set; }
 
         public Sma(IEnumerable<Candlestick> candleSticks, int length)
@@ -43,7 +43,7 @@ namespace Ankur.Trading.Core.Indicators
                 smaList.Add(avgsDecimal/Length);
             }
 
-            _sma = smaList;
+            sma = smaList;
         }
     }
 }
