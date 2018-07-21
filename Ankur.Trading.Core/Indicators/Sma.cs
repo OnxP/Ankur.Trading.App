@@ -10,37 +10,31 @@ namespace Ankur.Trading.Core.Indicators
 {
     public class Sma
     {
-        private IEnumerable<Candlestick> _candleSticks;
+        private readonly IEnumerable<Candlestick> _candleSticks;
         public IEnumerable<decimal> sma;
         private int Length;
 
-        public decimal SmaValue => sma.First();
+        public decimal SmaValue => sma.Last();
         public decimal Gradient { get; set; }
 
         public Sma(IEnumerable<Candlestick> candleSticks, int length)
         {
             _candleSticks = candleSticks;
             this.Length = length;
-            CalculateSMA();
+            CalculateSma();
         }
 
-        private void CalculateSMA()
+        private void CalculateSma()
         {
-            decimal[] avgsDecimals = new decimal[_candleSticks.Count() - Length];
-            int pos = 0;
-            foreach (Candlestick candlestick in _candleSticks.OrderBy(x=>x.OpenTime))
-            {
-                if (pos + Length >= _candleSticks.Count()) break;
-                for (int i = 0 + pos; i < avgsDecimals.Length && i - pos < Length; i++)
-                {
-                    avgsDecimals[i] += candlestick.Close;
-                }
-                pos++;
-            }
             List<decimal> smaList = new List<decimal>();
-            foreach (decimal avgsDecimal in avgsDecimals.Reverse())
+            Queue<decimal> queue = new Queue<decimal>(Length+1);
+            foreach (Candlestick candlestick in _candleSticks)
             {
-                smaList.Add(avgsDecimal/Length);
+                queue.Enqueue(candlestick.Close);
+                if (queue.Count < Length) continue;
+                if (queue.Count > Length) queue.Dequeue();
+                var sum = queue.ToList().Sum();
+                smaList.Add(sum/Length);
             }
 
             sma = smaList;

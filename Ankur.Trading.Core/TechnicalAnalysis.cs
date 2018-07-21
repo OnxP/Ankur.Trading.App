@@ -10,20 +10,20 @@ namespace Ankur.Trading.Core
 {
     public class TechnicalAnalysis
     {
-        private BinanceClient binanceClient;
-        private int NumberOfCandleSticks = 100;
+        private readonly BinanceClient _binanceClient;
+        private readonly int _numberOfCandleSticks = 100;
 
         public Dictionary<string,TradingPairInfo> Pairs = new Dictionary<string, TradingPairInfo>();
 
         public TechnicalAnalysis(BinanceClient binanceClient)
         {
-            this.binanceClient = binanceClient;
+            this._binanceClient = binanceClient;
         } 
 
         public void AddTradingPair(string pair, TimeInterval interval)
         {
             //var endTime = GetEndDate(DateTime.Now.Date, interval, NumberOfCandleSticks);
-            var candleSticks = binanceClient.GetCandleSticks(pair, interval, null,null,NumberOfCandleSticks).Result.Reverse();
+            var candleSticks = _binanceClient.GetCandleSticks(pair, interval, null,null,_numberOfCandleSticks).Result.Reverse();
             Pairs.Add(pair,new TradingPairInfo(pair,interval,candleSticks));
         }
 
