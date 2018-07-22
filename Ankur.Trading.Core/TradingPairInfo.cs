@@ -15,6 +15,10 @@ namespace Ankur.Trading.Core
         public Sma Sma25;
         public Sma Sma99;
 
+        public Ema Ema7;
+        public Ema Ema25;
+        public Ema Ema99;
+
         public TradingPairInfo(string pair, TimeInterval interval, IEnumerable<Candlestick> candleSticks)
         {
             this.pair = pair;
@@ -28,6 +32,9 @@ namespace Ankur.Trading.Core
             Sma7 = new Sma(_candleSticks,7);
             Sma25 = new Sma(_candleSticks,25);
             Sma99 = new Sma(_candleSticks,99);
+            Ema7 = new Ema(_candleSticks, 7);
+            Ema25 = new Ema(_candleSticks, 25);
+            Ema99 = new Ema(_candleSticks, 99);
         }
         
     }
