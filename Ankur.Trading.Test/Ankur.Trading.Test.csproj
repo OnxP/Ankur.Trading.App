@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Indicators\EmaTest.cs" />
     <Compile Include="Indicators\MaComparisioncs.cs" />
+    <Compile Include="Indicators\RsiTest.cs" />
     <Compile Include="Indicators\SmaTest.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

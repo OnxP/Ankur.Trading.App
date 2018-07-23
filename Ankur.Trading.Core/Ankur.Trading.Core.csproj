@@ -45,6 +45,7 @@
     <Compile Include="Indicators\Sma.cs" />
     <Compile Include="LinkedList\ILinkedListItem.cs" />
     <Compile Include="LinkedList\LinkedListAbstract.cs" />
+    <Compile Include="Oscillator\Rsi.cs" />
     <Compile Include="TechnicalAnalysis.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TradingPairInfo.cs" />
