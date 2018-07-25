@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Algorthms\TradingAlgorthms.cs" />
     <Compile Include="Indicators\Ema.cs" />
     <Compile Include="LinkedList\CandelStickInfo.cs" />
     <Compile Include="Indicators\Sma.cs" />

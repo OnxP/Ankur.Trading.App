@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ankur.Trading.Core", "Ankur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ankur.Trading.Test", "Ankur.Trading.Test\Ankur.Trading.Test.csproj", "{BEC151D5-610C-4E57-A6FB-0A9E85CF31BA}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Ankur.Trading.Indicators", "Ankur.Trading.Indicators\Ankur.Trading.Indicators.fsproj", "{5AC98872-9FEF-42EC-8E72-6BF34D3762E8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{BEC151D5-610C-4E57-A6FB-0A9E85CF31BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BEC151D5-610C-4E57-A6FB-0A9E85CF31BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BEC151D5-610C-4E57-A6FB-0A9E85CF31BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AC98872-9FEF-42EC-8E72-6BF34D3762E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AC98872-9FEF-42EC-8E72-6BF34D3762E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AC98872-9FEF-42EC-8E72-6BF34D3762E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AC98872-9FEF-42EC-8E72-6BF34D3762E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

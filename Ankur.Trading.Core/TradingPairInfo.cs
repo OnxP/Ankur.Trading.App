@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
 using Ankur.Trading.Core.Indicators;
 using Binance.API.Csharp.Client.Models.Enums;
 using Binance.API.Csharp.Client.Models.Market;
@@ -10,6 +12,9 @@ namespace Ankur.Trading.Core
         private string pair;
         private TimeInterval interval;
         private IEnumerable<Candlestick> _candleSticks;
+        public decimal CurrentPrice => _candleSticks.Last().Close;
+
+        public Dictionary<int,Sma> Sma = new Dictionary<int, Sma>();
 
         public Sma Sma7;
         public Sma Sma25;
@@ -29,9 +34,9 @@ namespace Ankur.Trading.Core
 
         private void BuildIndicators()
         {
-            Sma7 = new Sma(_candleSticks,7);
-            Sma25 = new Sma(_candleSticks,25);
-            Sma99 = new Sma(_candleSticks,99);
+            Sma.Add(5,new Sma(_candleSticks,5));
+            Sma.Add(10,new Sma(_candleSticks,10));
+            Sma.Add(20,new Sma(_candleSticks,20));
             Ema7 = new Ema(_candleSticks, 7);
             Ema25 = new Ema(_candleSticks, 25);
             Ema99 = new Ema(_candleSticks, 99);

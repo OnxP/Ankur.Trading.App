@@ -24,7 +24,7 @@ namespace Ankur.Trading.Core
         {
             //var endTime = GetEndDate(DateTime.Now.Date, interval, NumberOfCandleSticks);
             var candleSticks = _binanceClient.GetCandleSticks(pair, interval, null,null,_numberOfCandleSticks).Result.Reverse();
-            Pairs.Add(pair,new TradingPairInfo(pair,interval,candleSticks));
+            Pairs.Add(pair,new TradingPairInfo(pair,interval,candleSticks.Reverse()));
         }
 
         private DateTime GetEndDate(DateTime now, TimeInterval interval, int numberOfCandleSticks)
@@ -83,9 +83,20 @@ namespace Ankur.Trading.Core
 
         
 
-        public object GetTradingOpportunities(string buy)
+        public IEnumerable<string> GetTradingOpportunities(string buy)
         {
-            throw new NotImplementedException();
+            foreach (KeyValuePair<string, TradingPairInfo> tradingPairInfo in Pairs)
+            {
+                var sma5 = tradingPairInfo.Value.Sma[5].SmaValue;
+                var sma10 = tradingPairInfo.Value.Sma[10].SmaValue;
+                var trade = sma5 > sma10 ? "BUY" : "SELL";
+                StringBuilder builder = new StringBuilder();
+                builder.Append($"Current Price: {tradingPairInfo.Value.CurrentPrice}");
+                builder.Append($" Sma 5-{sma5}");
+                builder.Append($" Sma 10-{sma10}");
+                builder.Append($" Place Trade: {trade}");
+                yield return builder.ToString();
+            }
         }
     }
 }
