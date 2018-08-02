@@ -8,6 +8,8 @@ using Ankur.Trading.Core;
 using Ankur.Trading.Core.Algorthms;
 using Binance.API.Csharp.Client;
 using Binance.API.Csharp.Client.Models.Enums;
+using Binance.API.Csharp.Client.Models.Market.TradingRules;
+using Binance.API.Csharp.Client.Models.WebSocket;
 
 namespace Ankur.Trading.App
 {
@@ -27,8 +29,15 @@ namespace Ankur.Trading.App
                 ConfigurationManager.AppSettings["ApiSecret"]);
             BinanceClient binanceClient = new BinanceClient(apiClient, false);
 
-            //get trading pairs, filter for BTC. Order by Volume if possible.
+            binanceClient.ListenKlineEndpoint("ethbtc", TimeInterval.Minutes_1, KlineHandler);
 
+            //get trading pairs, filter for BTC. Order by Volume if possible.
+            var prices = binanceClient.GetAllPrices().Result;
+            
+            foreach (var allPrice in prices)
+            {
+                
+            }
             var technicalAnalysis = new TechnicalAnalysis(binanceClient);
             technicalAnalysis.AddTradingPair("eosbtc", TimeInterval.Minutes_1);
             var results = technicalAnalysis.GetTradingOpportunities("Buy");
@@ -38,7 +47,12 @@ namespace Ankur.Trading.App
             }
             Console.ReadKey();
         }
+        private static void KlineHandler(KlineMessage messageData)
+        {
+            var klineData = messageData;
+        }
     }
-
+    //back testing...monitor a single pair and look for trading opertunities.
+    //get 200 candles load 100 into the system then do a minute by minute replay.
     
 }
