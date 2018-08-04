@@ -13,34 +13,31 @@ namespace Ankur.Trading.Core.BackTest
 {
     public class BackTest
     {
-        public string TradingPair { get; set; }
-        public DateTime From { get; set; }
-        public DateTime To { get; set; }
-        public TimeInterval Interval { get; set; }
-        public TradingAlgorthm.TradingAlgorthm Algorthm { get; set; }
-        public decimal StartAmount { get; set; }
-        //not for simplicity the back test will make market limit orders the entry price.
-        public OrderType OrderType { get; set; }
-        public IEnumerable<TradingResult> TradingResults { get; set; }
+        private BackTestRequest _request;
 
         private BinanceClient _binanceClient = new BinanceClient(new ApiClient(ConfigurationManager.AppSettings["ApiKey"],
             ConfigurationManager.AppSettings["ApiSecret"]), false);
 
+        public BackTest(BackTestRequest request)
+        {
+            this._request = request;
+        }
+
         public void StartTrading()
         {
             //First Load data 100 candles starting from the FROM date.
-            var technicalAnalysis = new TechnicalAnalysis(_binanceClient);
-            technicalAnalysis.AddTradingPair(TradingPair, Interval, From);
+            var technicalAnalysis = new TechnicalAnalysis(_binanceClient, _request.Algorthm);
+            technicalAnalysis.AddTradingPair(_request.TradingPair, _request.Interval, _request.From);
             //get the candles for the from and to dates
-            var futureCandleSticks = _binanceClient.GetCandleSticks(TradingPair, Interval, From,To).Result.Reverse();
+            var futureCandleSticks = _binanceClient.GetCandleSticks(_request.TradingPair, _request.Interval, _request.From, _request.To).Result.Reverse();
             //loop through each candle and apply the algorthm to determine buy and sell oppertunities
             foreach (Candlestick futureCandleStick in futureCandleSticks)
             {
-                
+                technicalAnalysis.AddCandleStick(futureCandleStick);
             }
             //store the result for any trades that are made
 
-
+            _request.TradingResults = technicalAnalysis.TradingResults;
         }
     }
 }

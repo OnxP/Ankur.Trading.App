@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ankur.Trading.Core.TradingAlgorthm;
 using Binance.API.Csharp.Client;
 using Binance.API.Csharp.Client.Models.Enums;
 using Binance.API.Csharp.Client.Models.Market;
@@ -16,10 +17,12 @@ namespace Ankur.Trading.Core
 
         public Dictionary<string,TradingPairInfo> Pairs = new Dictionary<string, TradingPairInfo>();
 
-        public TechnicalAnalysis(BinanceClient binanceClient)
+        public TechnicalAnalysis(BinanceClient binanceClient, TradingAlgorthm.TradingAlgorthm algorthm)
         {
             this._binanceClient = binanceClient;
-        } 
+        }
+
+        public IEnumerable<TradingResult> TradingResults { get; set; }
 
         public void AddTradingPair(string pair, TimeInterval interval)
         {
@@ -88,9 +91,7 @@ namespace Ankur.Trading.Core
                     throw new ArgumentOutOfRangeException(nameof(interval), interval, null);
             }
         }
-
         
-
         public IEnumerable<string> GetTradingOpportunities(string buy)
         {
             foreach (KeyValuePair<string, TradingPairInfo> tradingPairInfo in Pairs)
@@ -110,6 +111,11 @@ namespace Ankur.Trading.Core
         public IEnumerable<Candlestick> GetData()
         {
             return Pairs.FirstOrDefault().Value._candleSticks;
+        }
+
+        public void AddCandleStick(Candlestick futureCandleStick)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackTest\BackTest.cs" />
+    <Compile Include="BackTest\BackTestRequest.cs" />
     <Compile Include="Indicators\Ema.cs" />
     <Compile Include="LinkedList\CandelStickInfo.cs" />
     <Compile Include="Indicators\Sma.cs" />
