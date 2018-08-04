@@ -11,7 +11,7 @@ namespace Ankur.Trading.Core
     {
         private string pair;
         private TimeInterval interval;
-        private IEnumerable<Candlestick> _candleSticks;
+        public IEnumerable<Candlestick> _candleSticks;
         public decimal CurrentPrice => _candleSticks.Last().Close;
 
         public Dictionary<int,Sma> Sma = new Dictionary<int, Sma>();

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Binance.API.Csharp.Client;
 using Binance.API.Csharp.Client.Models.Enums;
+using Binance.API.Csharp.Client.Models.Market;
 
 namespace Ankur.Trading.Core
 {
@@ -25,6 +26,13 @@ namespace Ankur.Trading.Core
             //var endTime = GetEndDate(DateTime.Now.Date, interval, NumberOfCandleSticks);
             var candleSticks = _binanceClient.GetCandleSticks(pair, interval, null,null,_numberOfCandleSticks).Result.Reverse();
             Pairs.Add(pair,new TradingPairInfo(pair,interval,candleSticks.Reverse()));
+        }
+
+        public void AddTradingPair(string pair, TimeInterval interval,DateTime? endTime)
+        {
+            //var endTime = GetEndDate(DateTime.Now.Date, interval, NumberOfCandleSticks);
+            var candleSticks = _binanceClient.GetCandleSticks(pair, interval, null, endTime, _numberOfCandleSticks).Result.Reverse();
+            Pairs.Add(pair, new TradingPairInfo(pair, interval, candleSticks.Reverse()));
         }
 
         private DateTime GetEndDate(DateTime now, TimeInterval interval, int numberOfCandleSticks)
@@ -97,6 +105,11 @@ namespace Ankur.Trading.Core
                 builder.Append($" Place Trade: {trade}");
                 yield return builder.ToString();
             }
+        }
+
+        public IEnumerable<Candlestick> GetData()
+        {
+            return Pairs.FirstOrDefault().Value._candleSticks;
         }
     }
 }

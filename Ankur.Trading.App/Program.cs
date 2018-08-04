@@ -5,11 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ankur.Trading.Core;
-using Ankur.Trading.Core.Algorthms;
 using Binance.API.Csharp.Client;
 using Binance.API.Csharp.Client.Models.Enums;
 using Binance.API.Csharp.Client.Models.Market.TradingRules;
 using Binance.API.Csharp.Client.Models.WebSocket;
+using System.Windows;
+using Ankur.Trading.Core.TradingAlgorthm;
 
 namespace Ankur.Trading.App
 {
@@ -22,22 +23,16 @@ namespace Ankur.Trading.App
             int MaxTradeNo = 1; //Max number of trades to execute before exiting
             int PollTime = 1; // How often to poll for price updates.
             decimal TradeAmount = 0.001m; //trading amount in BTC.
-            TradingAlgorthm TradingAlgorthm = TradingAlgorthm.Sma;
+            TradingAlgorthm TradingAlgorthm = TradingAlgorthm.SimpleSMA;
 
+            BinanceClient binanceClient = new BinanceClient(new ApiClient(ConfigurationManager.AppSettings["ApiKey"],
+                ConfigurationManager.AppSettings["ApiSecret"]), false);
 
-            ApiClient apiClient = new ApiClient(ConfigurationManager.AppSettings["ApiKey"],
-                ConfigurationManager.AppSettings["ApiSecret"]);
-            BinanceClient binanceClient = new BinanceClient(apiClient, false);
+          
 
-            binanceClient.ListenKlineEndpoint("ethbtc", TimeInterval.Minutes_1, KlineHandler);
+            //binanceClient.ListenKlineEndpoint("ethbtc", TimeInterval.Minutes_1, KlineHandler);
 
             //get trading pairs, filter for BTC. Order by Volume if possible.
-            var prices = binanceClient.GetAllPrices().Result;
-            
-            foreach (var allPrice in prices)
-            {
-                
-            }
             var technicalAnalysis = new TechnicalAnalysis(binanceClient);
             technicalAnalysis.AddTradingPair("eosbtc", TimeInterval.Minutes_1);
             var results = technicalAnalysis.GetTradingOpportunities("Buy");

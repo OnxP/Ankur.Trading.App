@@ -4,15 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{57492D84-9761-440F-A5A6-ED9B7E51FC2E}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Ankur.Trading.Core</RootNamespace>
-    <AssemblyName>Ankur.Trading.Core</AssemblyName>
+    <ProjectGuid>{1CC422B5-27C7-4AA2-B206-5CB7EECE99B1}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Ankur.Trading.BackTesting</RootNamespace>
+    <AssemblyName>Ankur.Trading.BackTesting</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -31,7 +33,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -41,31 +42,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BackTest\BackTest.cs" />
-    <Compile Include="Indicators\Ema.cs" />
-    <Compile Include="LinkedList\CandelStickInfo.cs" />
-    <Compile Include="Indicators\Sma.cs" />
-    <Compile Include="LinkedList\ILinkedListItem.cs" />
-    <Compile Include="LinkedList\LinkedListAbstract.cs" />
-    <Compile Include="Oscillator\Rsi.cs" />
-    <Compile Include="TechnicalAnalysis.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TradingAlgorthm\TradingAlgorthm.cs" />
-    <Compile Include="TradingAlgorthm\TradingResult.cs" />
-    <Compile Include="TradingPairInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Binance\Binance.API.Csharp.Client.Domain\Binance.API.Csharp.Client.Domain.csproj">
-      <Project>{E255F763-A2FE-43A8-9331-019796C935C7}</Project>
-      <Name>Binance.API.Csharp.Client.Domain</Name>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ankur.Trading.Core\Ankur.Trading.Core.csproj">
+      <Project>{57492D84-9761-440F-A5A6-ED9B7E51FC2E}</Project>
+      <Name>Ankur.Trading.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Binance\Binance.API.Csharp.Client.Models\Binance.API.Csharp.Client.Models.csproj">
       <Project>{7CF40EB8-D81D-40B5-B849-17E5662175D6}</Project>
       <Name>Binance.API.Csharp.Client.Models</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Binance\Binance.API.Csharp.Client\Binance.API.Csharp.Client.csproj">
-      <Project>{EC2A020E-338A-46EE-9D08-C158CBD49C92}</Project>
-      <Name>Binance.API.Csharp.Client</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
