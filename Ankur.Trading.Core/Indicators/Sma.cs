@@ -10,7 +10,7 @@ namespace Ankur.Trading.Core.Indicators
 {
     public class Sma
     {
-        private readonly IEnumerable<Candlestick> _candleSticks;
+        private IEnumerable<Candlestick> _candleSticks;
         public IEnumerable<decimal> sma;
         private int Length;
 
@@ -38,6 +38,22 @@ namespace Ankur.Trading.Core.Indicators
             }
 
             sma = smaList;
+        }
+
+        public void Add(Candlestick futureCandleStick)
+        {
+            var list = _candleSticks.ToList();
+            list.Add(futureCandleStick);
+            _candleSticks = list;
+            CalculateCurrentSma();
+        }
+
+        private void CalculateCurrentSma()
+        {
+            var sum = _candleSticks.Take(Length).Sum(x => x.Close);
+            var list = sma.ToList();
+            list.Add(sum/Length);
+            sma = list;
         }
     }
 }

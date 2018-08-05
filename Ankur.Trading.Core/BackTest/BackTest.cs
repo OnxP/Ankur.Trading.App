@@ -26,7 +26,7 @@ namespace Ankur.Trading.Core.BackTest
         public void StartTrading()
         {
             //First Load data 100 candles starting from the FROM date.
-            var technicalAnalysis = new TechnicalAnalysis(_binanceClient, _request.Algorthm);
+            var technicalAnalysis = new TechnicalAnalysis(_binanceClient, _request);
             technicalAnalysis.AddTradingPair(_request.TradingPair, _request.Interval, _request.From);
             //get the candles for the from and to dates
             var futureCandleSticks = _binanceClient.GetCandleSticks(_request.TradingPair, _request.Interval, _request.From, _request.To).Result.Reverse();
@@ -37,7 +37,7 @@ namespace Ankur.Trading.Core.BackTest
             }
             //store the result for any trades that are made
 
-            _request.TradingResults = technicalAnalysis.TradingResults;
+            //_request.TradingResults = technicalAnalysis.TradingResults;
         }
     }
 }

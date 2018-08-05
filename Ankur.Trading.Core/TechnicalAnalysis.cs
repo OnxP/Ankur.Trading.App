@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ankur.Trading.Core.BackTest;
 using Ankur.Trading.Core.TradingAlgorthm;
 using Binance.API.Csharp.Client;
 using Binance.API.Csharp.Client.Models.Enums;
@@ -13,13 +14,15 @@ namespace Ankur.Trading.Core
     public class TechnicalAnalysis
     {
         private readonly BinanceClient _binanceClient;
+        private BackTestRequest _request;
         private readonly int _numberOfCandleSticks = 100;
 
         public Dictionary<string,TradingPairInfo> Pairs = new Dictionary<string, TradingPairInfo>();
 
-        public TechnicalAnalysis(BinanceClient binanceClient, TradingAlgorthm.TradingAlgorthm algorthm)
+        public TechnicalAnalysis(BinanceClient binanceClient, BackTestRequest request)
         {
             this._binanceClient = binanceClient;
+            this._request = request;
         }
 
         public IEnumerable<TradingResult> TradingResults { get; set; }
@@ -27,15 +30,15 @@ namespace Ankur.Trading.Core
         public void AddTradingPair(string pair, TimeInterval interval)
         {
             //var endTime = GetEndDate(DateTime.Now.Date, interval, NumberOfCandleSticks);
-            var candleSticks = _binanceClient.GetCandleSticks(pair, interval, null,null,_numberOfCandleSticks).Result.Reverse();
-            Pairs.Add(pair,new TradingPairInfo(pair,interval,candleSticks.Reverse()));
+            var candleSticks = _binanceClient.GetCandleSticks(pair, interval, null,null,_numberOfCandleSticks).Result;
+            Pairs.Add(pair,new TradingPairInfo(pair,interval,candleSticks));
         }
 
         public void AddTradingPair(string pair, TimeInterval interval,DateTime? endTime)
         {
             //var endTime = GetEndDate(DateTime.Now.Date, interval, NumberOfCandleSticks);
-            var candleSticks = _binanceClient.GetCandleSticks(pair, interval, null, endTime, _numberOfCandleSticks).Result.Reverse();
-            Pairs.Add(pair, new TradingPairInfo(pair, interval, candleSticks.Reverse()));
+            var candleSticks = _binanceClient.GetCandleSticks(pair, interval, null, endTime, _numberOfCandleSticks).Result;
+            Pairs.Add(pair, new TradingPairInfo(pair, interval, candleSticks));
         }
 
         private DateTime GetEndDate(DateTime now, TimeInterval interval, int numberOfCandleSticks)
@@ -115,7 +118,7 @@ namespace Ankur.Trading.Core
 
         public void AddCandleStick(Candlestick futureCandleStick)
         {
-            throw new NotImplementedException();
+            Pairs[_request.TradingPair].Add(futureCandleStick);
         }
     }
 }

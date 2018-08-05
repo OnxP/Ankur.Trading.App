@@ -41,6 +41,13 @@ namespace Ankur.Trading.Core
             Ema25 = new Ema(_candleSticks, 25);
             Ema99 = new Ema(_candleSticks, 99);
         }
-        
+
+        public void Add(Candlestick futureCandleStick)
+        {
+            foreach (KeyValuePair<int, Sma> keyValuePair in Sma)
+            {
+                keyValuePair.Value.Add(futureCandleStick);
+            }
+        }
     }
 }
