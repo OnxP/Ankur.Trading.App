@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ankur.Trading.Core.BackTest;
-using Ankur.Trading.Core.TradingAlgorthm;
+using Ankur.Trading.Core.Request;
+using Ankur.Trading.Core.Trading_Algorthm;
 using Binance.API.Csharp.Client;
 using Binance.API.Csharp.Client.Models.Enums;
 using Binance.API.Csharp.Client.Models.Market;
@@ -14,12 +15,14 @@ namespace Ankur.Trading.Core
     public class TechnicalAnalysis
     {
         private readonly BinanceClient _binanceClient;
-        private BackTestRequest _request;
+        private IRequest _request;
         private readonly int _numberOfCandleSticks = 100;
+
+        private Algorthm _algorthm;
 
         public Dictionary<string,TradingPairInfo> Pairs = new Dictionary<string, TradingPairInfo>();
 
-        public TechnicalAnalysis(BinanceClient binanceClient, BackTestRequest request)
+        public TechnicalAnalysis(BinanceClient binanceClient, IRequest request)
         {
             this._binanceClient = binanceClient;
             this._request = request;
@@ -39,6 +42,7 @@ namespace Ankur.Trading.Core
             //var endTime = GetEndDate(DateTime.Now.Date, interval, NumberOfCandleSticks);
             var candleSticks = _binanceClient.GetCandleSticks(pair, interval, null, endTime, _numberOfCandleSticks).Result;
             Pairs.Add(pair, new TradingPairInfo(pair, interval, candleSticks));
+            _algorthm = new Algorthm(_request,candleSticks.ToList());
         }
 
         private DateTime GetEndDate(DateTime now, TimeInterval interval, int numberOfCandleSticks)
@@ -119,6 +123,18 @@ namespace Ankur.Trading.Core
         public void AddCandleStick(Candlestick futureCandleStick)
         {
             Pairs[_request.TradingPair].Add(futureCandleStick);
+        }
+
+        public AlgorthmResults RunAlgorthm()
+        {
+            //first run the algorthm to determine if there is a trading opprtunity 
+            return _algorthm.Evaulate(Pairs[_request.TradingPair]);
+            //produce some actions based on the results of the analysis
+            //execute those actions, or check stop limits etc. Trading Stratgy object
+            //3 options
+            // - make a Buy Trade
+            // - Make a Sell Trade
+            //Do Nothing
         }
     }
 }

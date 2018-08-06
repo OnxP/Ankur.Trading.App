@@ -10,7 +10,8 @@ using Binance.API.Csharp.Client.Models.Enums;
 using Binance.API.Csharp.Client.Models.Market.TradingRules;
 using Binance.API.Csharp.Client.Models.WebSocket;
 using System.Windows;
-using Ankur.Trading.Core.TradingAlgorthm;
+using Ankur.Trading.Core.BackTest;
+using Ankur.Trading.Core.Trading_Algorthm;
 
 namespace Ankur.Trading.App
 {
@@ -33,7 +34,7 @@ namespace Ankur.Trading.App
             //binanceClient.ListenKlineEndpoint("ethbtc", TimeInterval.Minutes_1, KlineHandler);
 
             //get trading pairs, filter for BTC. Order by Volume if possible.
-            var technicalAnalysis = new TechnicalAnalysis(binanceClient, TradingAlgorthm.SimpleSMA);
+            var technicalAnalysis = new TechnicalAnalysis(binanceClient, new BackTestRequest());
             technicalAnalysis.AddTradingPair("eosbtc", TimeInterval.Minutes_1);
             var results = technicalAnalysis.GetTradingOpportunities("Buy");
             foreach (var result in results)

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Ankur.Trading.Core.TradingAlgorthm
+namespace Ankur.Trading.Core.Trading_Algorthm
 {
     public enum TradingAlgorthm
     {

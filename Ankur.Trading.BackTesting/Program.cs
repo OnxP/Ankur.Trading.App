@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ankur.Trading.Core.BackTest;
-using Ankur.Trading.Core.TradingAlgorthm;
+using Ankur.Trading.Core.Trading_Algorthm;
 using Binance.API.Csharp.Client.Models.Enums;
 
 namespace Ankur.Trading.BackTesting

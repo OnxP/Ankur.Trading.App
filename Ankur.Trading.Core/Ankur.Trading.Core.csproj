@@ -49,11 +49,15 @@
     <Compile Include="LinkedList\ILinkedListItem.cs" />
     <Compile Include="LinkedList\LinkedListAbstract.cs" />
     <Compile Include="Oscillator\Rsi.cs" />
+    <Compile Include="Request\IRequest.cs" />
     <Compile Include="TechnicalAnalysis.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TradingAlgorthm\TradingAlgorthm.cs" />
-    <Compile Include="TradingAlgorthm\TradingResult.cs" />
+    <Compile Include="Trading Algorthm\Algorthm.cs" />
+    <Compile Include="Trading Algorthm\AlgorthmResults.cs" />
+    <Compile Include="Trading Algorthm\TradingAlgorthm.cs" />
+    <Compile Include="Trading Algorthm\TradingResult.cs" />
     <Compile Include="TradingPairInfo.cs" />
+    <Compile Include="Trading Strategy\TradingStrategy.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Binance\Binance.API.Csharp.Client.Domain\Binance.API.Csharp.Client.Domain.csproj">

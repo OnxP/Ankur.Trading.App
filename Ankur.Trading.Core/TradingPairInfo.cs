@@ -16,10 +16,6 @@ namespace Ankur.Trading.Core
 
         public Dictionary<int,Sma> Sma = new Dictionary<int, Sma>();
 
-        public Sma Sma7;
-        public Sma Sma25;
-        public Sma Sma99;
-
         public Ema Ema7;
         public Ema Ema25;
         public Ema Ema99;
