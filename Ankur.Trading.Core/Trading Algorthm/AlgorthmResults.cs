@@ -9,5 +9,8 @@ namespace Ankur.Trading.Core.Trading_Algorthm
     //this should class should contain the result of the algorthm and evidence to explain why the recommendation was made.
     public class AlgorthmResults
     {
+        public TradeAction Action { get; set; }
     }
+
+    public enum TradeAction { Buy, Sell, Wait}
 }
