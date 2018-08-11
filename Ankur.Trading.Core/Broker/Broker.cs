@@ -25,13 +25,12 @@ namespace Ankur.Trading.Core.Broker
             this.request = request;
         }
 
-        internal Trade MakeTransaction(TradeAction action,decimal quantity)
+        internal Trade MakeTransaction(TradeAction action,decimal quantity,decimal lastPrice = 0m)
         {
             if (TestTrade)
             {
-                var currentPrices = binanceClient.GetAllPrices().Result;
-                var currentPrice = currentPrices.Where(x => x.Symbol == request.TradingPair).First();
-                return new Trade(currentPrice, action == TradeAction.Buy ? CalculateQuantity(currentPrice, quantity) : -quantity);
+                //can't get the latest price for back testing, need to use the close price from the last candle
+                return new Trade(request.TradingPair,lastPrice, action == TradeAction.Buy ? CalculateQuantity(lastPrice, quantity) : -quantity);
             }
             else
             {   //goes to binance and places the transaction.
@@ -41,9 +40,9 @@ namespace Ankur.Trading.Core.Broker
             }
         }
 
-        private decimal CalculateQuantity(SymbolPrice currentPrice, decimal quantity)
+        private decimal CalculateQuantity(decimal currentPrice, decimal quantity)
         {
-            return Math.Round(quantity / currentPrice.Price,2);
+            return Math.Round(quantity / currentPrice,2);
         }
     }
 }

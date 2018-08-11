@@ -11,12 +11,12 @@ namespace Ankur.Trading.Core.Trades
         public bool Open => Trades.Count >= 1 && Quantity != 0;
         public DateTime OpenTime { get; set; }
         public DateTime CloseTime { get; set; }
-        public decimal Quantity { get; set; }
+        public decimal Quantity => Trades.Sum(x => x.Quantity);
         public string Currency { get; set; }
         public decimal BoughtPrice { get; set;}
         public decimal SoldPrice { get; set;}
 
-        internal IList<Trade> Trades;
+        internal IList<Trade> Trades = new List<Trade>();
         internal void Add(Trade trade)
         {
             Trades.Add(trade);

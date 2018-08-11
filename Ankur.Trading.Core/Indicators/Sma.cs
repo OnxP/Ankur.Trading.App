@@ -44,7 +44,7 @@ namespace Ankur.Trading.Core.Indicators
         {
             var list = _candleSticks.ToList();
             list.Add(futureCandleStick);
-            _candleSticks = list;
+            _candleSticks = list.OrderByDescending(x=>x.CloseDateTime);
             CalculateCurrentSma();
         }
 

@@ -32,7 +32,7 @@ namespace Ankur.Trading.Core
         {
             Sma.Add(5,new Sma(_candleSticks,5));
             Sma.Add(10,new Sma(_candleSticks,10));
-            Sma.Add(20,new Sma(_candleSticks,20));
+            Sma.Add(40,new Sma(_candleSticks,40));
             Ema7 = new Ema(_candleSticks, 7);
             Ema25 = new Ema(_candleSticks, 25);
             Ema99 = new Ema(_candleSticks, 99);
@@ -40,10 +40,13 @@ namespace Ankur.Trading.Core
 
         public void Add(Candlestick futureCandleStick)
         {
+            var candleSticks = _candleSticks.ToList<Candlestick>();
+            candleSticks.Add(futureCandleStick);
             foreach (KeyValuePair<int, Sma> keyValuePair in Sma)
             {
                 keyValuePair.Value.Add(futureCandleStick);
             }
+            _candleSticks = candleSticks;
         }
     }
 }

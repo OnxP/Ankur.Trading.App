@@ -14,9 +14,11 @@ namespace Ankur.Trading.Core.Trading_Algorthm
             this.sellTrade = sellTrade;
         }
 
+        public DateTime FirstTrade => buyTrade.Time;
+        public DateTime LastTrade => sellTrade.Time;
         public decimal Bought => buyTrade.Price * buyTrade.Quantity;
         public decimal Sold => sellTrade.Price * sellTrade.Quantity * -1;
-        public decimal Pnl => Bought - Sold;
-        public decimal PnlPercent => Math.Round((1 - Sold / Bought) * 100,2);
+        public decimal Pnl => Sold - Bought;
+        public decimal PnlPercent => Math.Round(((Sold / Bought) -1) * 100,2);
     }
 }

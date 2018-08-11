@@ -18,7 +18,6 @@ namespace Ankur.Trading.Core.Request
         OrderType OrderType { get; set; }
         IEnumerable<TradingResult> TradingResults { get; set; }
         bool TestTrade { get; }
-        decimal TradeAmount { get; set; }
 
         void Add(TradingResult result);
     }

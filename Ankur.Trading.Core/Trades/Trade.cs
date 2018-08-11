@@ -17,11 +17,11 @@ namespace Ankur.Trading.Core.Trades
             this.Price = result.Price;
             this.Quantity = result.ExecutedQty;
         }
-        public Trade(SymbolPrice currentPrice,decimal quantity)
+        public Trade(string pair,decimal currentPrice,decimal quantity)
         {
-            this.Symbol = currentPrice.Symbol;
+            this.Symbol = pair;
             this.Time = DateTime.Now;
-            this.Price = currentPrice.Price;
+            this.Price = currentPrice;
             this.Quantity = quantity;
         }
 

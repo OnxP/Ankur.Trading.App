@@ -10,6 +10,7 @@ namespace Ankur.Trading.Core.Trading_Algorthm
     public class AlgorthmResults
     {
         public TradeAction Action { get; set; }
+        public decimal LastPrice { get; set; }
     }
 
     public enum TradeAction { Buy, Sell, Wait}

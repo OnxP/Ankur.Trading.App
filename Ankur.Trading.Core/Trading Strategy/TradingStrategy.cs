@@ -29,6 +29,7 @@ namespace Ankur.Trading.Core.Trading_Strategy
             broker = new Broker.Broker(binanceClient,request);
             _request = request;
             CurrentPosition = new Position();
+            
         }
 
         public void Process(AlgorthmResults analysisResults)
@@ -47,11 +48,16 @@ namespace Ankur.Trading.Core.Trading_Strategy
             }
         }
 
+        internal void ClosePosition(decimal price)
+        {
+            if(CurrentPosition.Open) CurrentPosition.Add(broker.MakeTransaction(TradeAction.Sell, CurrentPosition.Quantity, price));
+        }
+
         internal IEnumerable<TradingResult> TradingResults()
         {
             //assume buy and sell pairs are store next to each other in the list.
             var list = new List<TradingResult>();
-            for(int i =1; i<CurrentPosition.Trades.Count;i++)
+            for(int i =1; i<CurrentPosition.Trades.Count;i+=2)
             {
                 var buyTrade = CurrentPosition.Trades[i - 1];
                 var sellTrade = CurrentPosition.Trades[i];
@@ -63,19 +69,16 @@ namespace Ankur.Trading.Core.Trading_Strategy
 
         public void BuyAction(AlgorthmResults results)
         {
-            if (CurrentPosition != null && CurrentPosition.Open) return;
-            CurrentPosition.Add(broker.MakeTransaction(results.Action,_request.TradeAmount));
+            if (CurrentPosition.Open) return;
+            CurrentPosition.Add(broker.MakeTransaction(results.Action,_request.StartAmount,results.LastPrice));
         }
 
         public void SellAction(AlgorthmResults results)
         {
-            if(CurrentPosition is null || CurrentPosition.Open)
+            if(CurrentPosition.Open)
             {
-                CurrentPosition.Add(broker.MakeTransaction(results.Action,CurrentPosition.Quantity));
-                if(!CurrentPosition.Open)
-                {
-                    positionHistory.Add(CurrentPosition);
-                }
+                CurrentPosition.Add(broker.MakeTransaction(results.Action,CurrentPosition.Quantity,results.LastPrice));
+
             }
         }
 

@@ -21,7 +21,7 @@ namespace Ankur.Trading.BackTesting
                 To = new DateTime(2018, 07, 20),
                 Interval = TimeInterval.Minutes_30,
                 Algorthm = TradingAlgorthm.SimpleSMA,
-                StartAmount = 0.01m,
+                StartAmount = 1m,
                 OrderType = OrderType.LIMIT
             };
 
@@ -40,6 +40,24 @@ namespace Ankur.Trading.BackTesting
             {
                 Console.WriteLine($"Bought: {tradingResult.Bought} Sold: {tradingResult.Sold} PNL: {tradingResult.Pnl} - {tradingResult.PnlPercent}");
             }
+
+            //total
+
+            Console.WriteLine($"StartTime: {backTest.StartTime} FinishTime: {backTest.FinishTime}");
+            Console.WriteLine($"Total PNL - {request.TradingResults.Sum(x=>x.Pnl)}");
+            Console.WriteLine($"Total % profit - {CalculatePercent(request)}");
+
+            Console.ReadKey();
+        }
+
+        public static decimal CalculatePercent(BackTestRequest request)
+        {
+            var sum = request.TradingResults.Sum(x => x.Pnl);
+
+            //var diff = sum - request.StartAmount;
+            var result = sum / request.StartAmount * 100;
+            return Math.Round(result);
+
         }
     }
 }
