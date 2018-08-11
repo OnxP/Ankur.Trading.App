@@ -10,16 +10,24 @@ namespace Ankur.Trading.Core.Trades
 {
     public class Trade
     {
-        private Order result;
-        private SymbolPrice currentPrice;
-
         public Trade(Order result)
         {
-            this.result = result;
+            this.Symbol = result.Symbol;
+            this.Time = DateTimeOffset.FromUnixTimeMilliseconds(result.Time).DateTime;
+            this.Price = result.Price;
+            this.Quantity = result.ExecutedQty;
         }
-        public Trade(SymbolPrice currentPrice)
+        public Trade(SymbolPrice currentPrice,decimal quantity)
         {
-            this.currentPrice = currentPrice;
+            this.Symbol = currentPrice.Symbol;
+            this.Time = DateTime.Now;
+            this.Price = currentPrice.Price;
+            this.Quantity = quantity;
         }
+
+        public DateTime Time { get; private set; }
+        public decimal Price { get; private set; }
+        public decimal Quantity { get; private set; }
+        public string Symbol { get; private set; }
     }
 }

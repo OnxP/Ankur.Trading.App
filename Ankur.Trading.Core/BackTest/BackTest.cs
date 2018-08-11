@@ -41,7 +41,7 @@ namespace Ankur.Trading.Core.BackTest
             }
             //store the result for any trades that are made
 
-            //_request.TradingResults = technicalAnalysis.TradingResults;
+            _request.TradingResults = tradingStrategy.TradingResults();
         }
     }
 }

@@ -5,6 +5,7 @@ using Ankur.Trading.Core.Trading_Algorthm;
 using Binance.API.Csharp.Client;
 using Ankur.Trading.Core.Broker;
 using System.Collections.Generic;
+using System;
 
 namespace Ankur.Trading.Core.Trading_Strategy
 {
@@ -22,7 +23,6 @@ namespace Ankur.Trading.Core.Trading_Strategy
         private Position CurrentPosition { get; set; }
         private Broker.Broker broker { get; set; }
         private IList<Position> positionHistory { get; set; }
-
 
         public TradingStrategy(BinanceClient binanceClient, BackTestRequest request)
         {
@@ -47,17 +47,31 @@ namespace Ankur.Trading.Core.Trading_Strategy
             }
         }
 
+        internal IEnumerable<TradingResult> TradingResults()
+        {
+            //assume buy and sell pairs are store next to each other in the list.
+            var list = new List<TradingResult>();
+            for(int i =1; i<CurrentPosition.Trades.Count;i++)
+            {
+                var buyTrade = CurrentPosition.Trades[i - 1];
+                var sellTrade = CurrentPosition.Trades[i];
+
+                list.Add(new TradingResult(buyTrade,sellTrade));
+            }
+            return list;
+        }
+
         public void BuyAction(AlgorthmResults results)
         {
             if (CurrentPosition != null && CurrentPosition.Open) return;
-            CurrentPosition.Add(broker.MakeTransaction(results.Action));
+            CurrentPosition.Add(broker.MakeTransaction(results.Action,_request.TradeAmount));
         }
 
         public void SellAction(AlgorthmResults results)
         {
             if(CurrentPosition is null || CurrentPosition.Open)
             {
-                CurrentPosition.Add(broker.MakeTransaction(results.Action));
+                CurrentPosition.Add(broker.MakeTransaction(results.Action,CurrentPosition.Quantity));
                 if(!CurrentPosition.Open)
                 {
                     positionHistory.Add(CurrentPosition);

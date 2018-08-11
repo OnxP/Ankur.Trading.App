@@ -8,7 +8,7 @@ namespace Ankur.Trading.Core.Trades
 {
     public class Position
     {
-        public bool Open { get; set; }
+        public bool Open => Trades.Count >= 1 && Quantity != 0;
         public DateTime OpenTime { get; set; }
         public DateTime CloseTime { get; set; }
         public decimal Quantity { get; set; }
@@ -16,14 +16,10 @@ namespace Ankur.Trading.Core.Trades
         public decimal BoughtPrice { get; set;}
         public decimal SoldPrice { get; set;}
 
-        internal void Add(Position position)
-        {
-            throw new NotImplementedException();
-        }
-
+        internal IList<Trade> Trades;
         internal void Add(Trade trade)
         {
-            throw new NotImplementedException();
+            Trades.Add(trade);
         }
     }
 }

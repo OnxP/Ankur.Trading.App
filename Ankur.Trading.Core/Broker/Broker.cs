@@ -8,6 +8,7 @@ using Ankur.Trading.Core.Trades;
 using Ankur.Trading.Core.Trading_Algorthm;
 using Binance.API.Csharp.Client;
 using Ankur.Trading.Core.Request;
+using Binance.API.Csharp.Client.Models.Market;
 
 namespace Ankur.Trading.Core.Broker
 {
@@ -24,20 +25,25 @@ namespace Ankur.Trading.Core.Broker
             this.request = request;
         }
 
-        internal Trade MakeTransaction(TradeAction action)
+        internal Trade MakeTransaction(TradeAction action,decimal quantity)
         {
             if (TestTrade)
             {
                 var currentPrices = binanceClient.GetAllPrices().Result;
                 var currentPrice = currentPrices.Where(x => x.Symbol == request.TradingPair).First();
-                return new Trade(currentPrice);
+                return new Trade(currentPrice, action == TradeAction.Buy ? CalculateQuantity(currentPrice, quantity) : -quantity);
             }
             else
             {   //goes to binance and places the transaction.
-                var newOrder = binanceClient.PostNewOrder(request.TradingPair, request.TradeAmount, 0m, action == TradeAction.Buy ? Binance.API.Csharp.Client.Models.Enums.OrderSide.BUY : Binance.API.Csharp.Client.Models.Enums.OrderSide.SELL, Binance.API.Csharp.Client.Models.Enums.OrderType.MARKET).Result;
+                var newOrder = binanceClient.PostNewOrder(request.TradingPair, quantity, 0m, action == TradeAction.Buy ? Binance.API.Csharp.Client.Models.Enums.OrderSide.BUY : Binance.API.Csharp.Client.Models.Enums.OrderSide.SELL, Binance.API.Csharp.Client.Models.Enums.OrderType.MARKET).Result;
                 var Order = binanceClient.GetOrder(request.TradingPair, newOrder.OrderId).Result;
                 return new Trade(Order);
             }
+        }
+
+        private decimal CalculateQuantity(SymbolPrice currentPrice, decimal quantity)
+        {
+            return Math.Round(quantity / currentPrice.Price,2);
         }
     }
 }
