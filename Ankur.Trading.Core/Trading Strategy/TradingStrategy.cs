@@ -28,6 +28,7 @@ namespace Ankur.Trading.Core.Trading_Strategy
         {
             broker = new Broker.Broker(binanceClient,request);
             _request = request;
+            CurrentPosition = new Position();
         }
 
         public void Process(AlgorthmResults analysisResults)
@@ -49,7 +50,7 @@ namespace Ankur.Trading.Core.Trading_Strategy
         public void BuyAction(AlgorthmResults results)
         {
             if (CurrentPosition != null && CurrentPosition.Open) return;
-            CurrentPosition = broker.MakeTransaction(results.Action);
+            CurrentPosition.Add(broker.MakeTransaction(results.Action));
         }
 
         public void SellAction(AlgorthmResults results)

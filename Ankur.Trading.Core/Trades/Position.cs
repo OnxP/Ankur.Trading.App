@@ -20,5 +20,10 @@ namespace Ankur.Trading.Core.Trades
         {
             throw new NotImplementedException();
         }
+
+        internal void Add(Trade trade)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

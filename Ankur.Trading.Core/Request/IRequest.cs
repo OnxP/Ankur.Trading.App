@@ -17,6 +17,8 @@ namespace Ankur.Trading.Core.Request
         //not for simplicity the back test will make market limit orders the entry price.
         OrderType OrderType { get; set; }
         IEnumerable<TradingResult> TradingResults { get; set; }
+        bool TestTrade { get; }
+        decimal TradeAmount { get; set; }
 
         void Add(TradingResult result);
     }
