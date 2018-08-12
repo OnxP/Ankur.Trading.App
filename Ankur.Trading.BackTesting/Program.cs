@@ -44,6 +44,7 @@ namespace Ankur.Trading.BackTesting
             //total
 
             Console.WriteLine($"StartTime: {backTest.StartTime} FinishTime: {backTest.FinishTime}");
+            Console.WriteLine($"BTC Finishing Amount: {request.FinalAmount}btc");
             Console.WriteLine($"Total PNL - {request.TradingResults.Sum(x=>x.Pnl)}");
             Console.WriteLine($"Total % profit - {CalculatePercent(request)}");
 

@@ -23,13 +23,14 @@ namespace Ankur.Trading.Core.Trading_Strategy
         private Position CurrentPosition { get; set; }
         private Broker.Broker broker { get; set; }
         private IList<Position> positionHistory { get; set; }
+        public object CurrentBtcAmount => CurrentPosition.BtcAmount;
 
         public TradingStrategy(BinanceClient binanceClient, BackTestRequest request)
         {
             broker = new Broker.Broker(binanceClient,request);
             _request = request;
             CurrentPosition = new Position();
-            
+            CurrentPosition.BtcAmount = _request.StartAmount;
         }
 
         public void Process(AlgorthmResults analysisResults)
@@ -70,14 +71,16 @@ namespace Ankur.Trading.Core.Trading_Strategy
         public void BuyAction(AlgorthmResults results)
         {
             if (CurrentPosition.Open) return;
-            CurrentPosition.Add(broker.MakeTransaction(results.Action,_request.StartAmount,results.LastPrice));
+            CurrentPosition.Add(broker.MakeTransaction(results.Action,CurrentPosition.BtcAmount,results.LastPrice));
         }
 
         public void SellAction(AlgorthmResults results)
         {
             if(CurrentPosition.Open)
             {
+                var quantity = CurrentPosition.Quantity;
                 CurrentPosition.Add(broker.MakeTransaction(results.Action,CurrentPosition.Quantity,results.LastPrice));
+                CurrentPosition.BtcAmount = quantity * results.LastPrice;
 
             }
         }

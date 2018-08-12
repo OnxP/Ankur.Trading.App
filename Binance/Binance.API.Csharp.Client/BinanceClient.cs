@@ -166,7 +166,7 @@ namespace Binance.API.Csharp.Client
         /// <param name="interval">Time interval to retreive.</param>
         /// <param name="limit">Limit of records to retrieve.</param>
         /// <returns></returns>
-        public async Task<IEnumerable<Candlestick>> GetCandleSticks(string symbol, TimeInterval interval, DateTime? startTime = null, DateTime? endTime = null, int limit = 1000000)
+        public async Task<IEnumerable<Candlestick>> GetCandleSticks(string symbol, TimeInterval interval, DateTime? startTime = null, DateTime? endTime = null, int limit = 1000)
         {
             if (string.IsNullOrWhiteSpace(symbol))
             {

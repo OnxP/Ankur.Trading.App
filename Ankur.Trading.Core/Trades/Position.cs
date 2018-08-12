@@ -21,5 +21,7 @@ namespace Ankur.Trading.Core.Trades
         {
             Trades.Add(trade);
         }
+
+        public decimal BtcAmount { get; internal set; }
     }
 }

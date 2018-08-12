@@ -23,6 +23,8 @@ namespace Ankur.Trading.Core.BackTest
 
         public bool TestTrade => true;
 
+        public object FinalAmount { get; internal set; }
+
         public void Add(TradingResult tradingResult)
         {
             var list = TradingResults.ToList();
