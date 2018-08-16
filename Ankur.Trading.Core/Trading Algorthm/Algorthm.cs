@@ -19,9 +19,9 @@ namespace Ankur.Trading.Core.Trading_Algorthm
         public AlgorthmResults Evaulate(TradingPairInfo tradingPairInfo)
         {
             var result = new AlgorthmResults();
-            var sma5 = tradingPairInfo.Sma[5].SmaValue;
-            var sma10 = tradingPairInfo.Sma[10].SmaValue;
-            var sma40 = tradingPairInfo.Sma[40].SmaValue;
+            var sma5 =  tradingPairInfo.Ema[5].EmaValue;
+            var sma10 = tradingPairInfo.Ema[15].EmaValue;
+            var sma40 = tradingPairInfo.Ema[40].EmaValue;
             result.LastPrice = tradingPairInfo.CurrentPrice;
 
             if(sma5 > sma10)

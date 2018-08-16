@@ -10,7 +10,7 @@ namespace Ankur.Trading.Core.Indicators
 {
     public class Ema
     {
-        private readonly IEnumerable<Candlestick> _candleSticks;
+        private IEnumerable<Candlestick> _candleSticks;
         public IEnumerable<decimal> ema;
         private readonly int Length;
         private decimal Multiplier => 2 / (decimal)(Length + 1);
@@ -49,6 +49,21 @@ namespace Ankur.Trading.Core.Indicators
             }
 
             ema = emaList;
+        }
+
+        public void Add(Candlestick futureCandleStick)
+        {
+            var list = _candleSticks.ToList();
+            list.Add(futureCandleStick);
+            _candleSticks = list.OrderByDescending(x => x.CloseDateTime);
+            CalculateCurrentEma(futureCandleStick);
+        }
+
+        private void CalculateCurrentEma(Candlestick futureCandleStick)
+        {
+            var list = ema.ToList();
+            list.Add((futureCandleStick.Close - EmaValue) * Multiplier + EmaValue);
+            ema = list;
         }
     }
 }

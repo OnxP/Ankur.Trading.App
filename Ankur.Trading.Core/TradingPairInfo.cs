@@ -15,10 +15,7 @@ namespace Ankur.Trading.Core
         public decimal CurrentPrice => _candleSticks.Last().Close;
 
         public Dictionary<int,Sma> Sma = new Dictionary<int, Sma>();
-
-        public Ema Ema7;
-        public Ema Ema25;
-        public Ema Ema99;
+        public Dictionary<int,Ema> Ema = new Dictionary<int, Ema>();
 
         public TradingPairInfo(string pair, TimeInterval interval, IEnumerable<Candlestick> candleSticks)
         {
@@ -32,10 +29,14 @@ namespace Ankur.Trading.Core
         {
             Sma.Add(5,new Sma(_candleSticks,5));
             Sma.Add(10,new Sma(_candleSticks,10));
+            Sma.Add(15,new Sma(_candleSticks,15));
+            Sma.Add(20,new Sma(_candleSticks,20));
             Sma.Add(40,new Sma(_candleSticks,40));
-            Ema7 = new Ema(_candleSticks, 7);
-            Ema25 = new Ema(_candleSticks, 25);
-            Ema99 = new Ema(_candleSticks, 99);
+            Ema.Add(5,new Ema(_candleSticks,5));
+            Ema.Add(10,new Ema(_candleSticks,10));
+            Ema.Add(15,new Ema(_candleSticks,15));
+            Ema.Add(20,new Ema(_candleSticks,20));
+            Ema.Add(40,new Ema(_candleSticks,40));
         }
 
         public void Add(Candlestick futureCandleStick)
@@ -43,6 +44,10 @@ namespace Ankur.Trading.Core
             var candleSticks = _candleSticks.ToList<Candlestick>();
             candleSticks.Add(futureCandleStick);
             foreach (KeyValuePair<int, Sma> keyValuePair in Sma)
+            {
+                keyValuePair.Value.Add(futureCandleStick);
+            }
+            foreach (KeyValuePair<int, Ema> keyValuePair in Ema)
             {
                 keyValuePair.Value.Add(futureCandleStick);
             }

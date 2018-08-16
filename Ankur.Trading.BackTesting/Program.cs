@@ -19,7 +19,7 @@ namespace Ankur.Trading.BackTesting
                 TradingPair = "eosbtc",
                 From = new DateTime(2018, 01, 20),
                 To = new DateTime(2018, 07, 20),
-                Interval = TimeInterval.Minutes_30,
+                Interval = TimeInterval.Days_1,
                 Algorthm = TradingAlgorthm.SimpleSMA,
                 StartAmount = 1m,
                 OrderType = OrderType.LIMIT
