@@ -16,9 +16,9 @@ namespace Ankur.Trading.Core.Trading_Algorthm
             this.list = list;
         }
 
-        public AlgorthmResults Evaulate(TradingPairInfo tradingPairInfo)
+        public AlgorthmResults Evaulate(string ticker, TradingPairInfo tradingPairInfo)
         {
-            var result = new AlgorthmResults();
+            var result = new AlgorthmResults(ticker);
             var sma5 =  tradingPairInfo.Ema[5].EmaValue;
             var sma10 = tradingPairInfo.Ema[15].EmaValue;
             var sma40 = tradingPairInfo.Ema[40].EmaValue;

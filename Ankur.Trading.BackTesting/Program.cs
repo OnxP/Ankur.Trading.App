@@ -16,7 +16,7 @@ namespace Ankur.Trading.BackTesting
             //PARAMS
             BackTestRequest request = new BackTestRequest
             {
-                TradingPair = "eosbtc",
+                TradingPairs = new List<string> { "eosbtc", "ethbtc" },
                 From = new DateTime(2018, 01, 20),
                 To = new DateTime(2018, 07, 20),
                 Interval = TimeInterval.Days_1,
@@ -30,18 +30,10 @@ namespace Ankur.Trading.BackTesting
             //the system can then make decisions at which points to buy and sell (simple SMA strategy to start with).
             //once the processing has been completed the result are displayed, each trade with buy price and sell price and percentage profit.
             var backTest = new BackTest(request);
+            backTest.LogTrade += LogTrade;
             //TODO make this process ASYNC.
-            backTest.StartTrading();
-
-            //wait for trading to complete.
-
             Console.WriteLine($"Starting Amount: {request.StartAmount}btc");
-            foreach (TradingResult tradingResult in request.TradingResults)
-            {
-                Console.WriteLine($"Bought: {tradingResult.Bought} Sold: {tradingResult.Sold} PNL: {tradingResult.Pnl} - {tradingResult.PnlPercent}");
-            }
-
-            //total
+            backTest.StartTrading();
 
             Console.WriteLine($"StartTime: {backTest.StartTime} FinishTime: {backTest.FinishTime}");
             Console.WriteLine($"BTC Finishing Amount: {request.FinalAmount}btc");
@@ -59,6 +51,11 @@ namespace Ankur.Trading.BackTesting
             var result = sum / request.StartAmount * 100;
             return Math.Round(result);
 
+        }
+
+        public static void LogTrade(TradingResult tradingResult)
+        {
+            Console.WriteLine($"Pair: {tradingResult.Pair} Bought: {tradingResult.Bought} Sold: {tradingResult.Sold} PNL: {tradingResult.Pnl} - {tradingResult.PnlPercent}");
         }
     }
 }

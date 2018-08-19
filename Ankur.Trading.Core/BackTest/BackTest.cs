@@ -4,18 +4,28 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ankur.Trading.Core.Trading_Algorthm;
 using Ankur.Trading.Core.Trading_Strategy;
 using Binance.API.Csharp.Client;
 using Binance.API.Csharp.Client.Models.Enums;
 using Binance.API.Csharp.Client.Models.Market;
+using System.Threading;
 
 namespace Ankur.Trading.Core.BackTest
 {
     public class BackTest
     {
         private BackTestRequest _request;
+        private TechnicalAnalysis technicalAnalysis;
+        private TradingStrategy tradingStrategy;
+
         public DateTime StartTime { get; set; }
         public DateTime FinishTime { get; set; }
+        public Action<TradingResult> LogTrade { get; set; }
+        //used to close positions at the end of backtesting.
+        private Dictionary<string,decimal> LastPrices { get; set; }
+        private Queue<Dictionary<string,Candlestick>> CandleSticks { get; set; }
+        private bool IsLastCandleStick { get; set; }
 
         private BinanceClient _binanceClient = new BinanceClient(new ApiClient(ConfigurationManager.AppSettings["ApiKey"],
             ConfigurationManager.AppSettings["ApiSecret"]), false);
@@ -23,35 +33,94 @@ namespace Ankur.Trading.Core.BackTest
         public BackTest(BackTestRequest request)
         {
             this._request = request;
+            technicalAnalysis = new TechnicalAnalysis(_binanceClient, _request);
+            tradingStrategy = new TradingStrategy(_binanceClient, _request);
+            LastPrices = new Dictionary<string, decimal>();
+            CandleSticks = new Queue<Dictionary<string, Candlestick>>();
+            IsLastCandleStick = false;
+            foreach (var item in _request.TradingPairs)
+            {
+                LastPrices.Add(item, 0m);
+            }
         }
 
         public void StartTrading()
         {
+            StartTime = _request.From;
             //First Load data 100 candles starting from the FROM date.
-            var technicalAnalysis = new TechnicalAnalysis(_binanceClient, _request);
-            var tradingStrategy = new TradingStrategy(_binanceClient,_request);
-            technicalAnalysis.AddTradingPair(_request.TradingPair, _request.Interval, _request.From);
-            var futureCandleSticks = new List<Candlestick>();
-            var from = _request.From;
+            
             //get the candles for the from and to dates
+            LoadAllCandleSticks();
+
+            //loop through each candle and apply the algorthm to determine buy and sell oppertunities
+
+            while (ProcessCandleSticks(GetNextCandleSticks()))
+            {
+            };
+            
+        }
+
+        private void LoadAllCandleSticks()
+        {
+            var from = _request.From;
             foreach (DateTime dt in SplitDates(_request.Interval, _request.From, _request.To))
             {
-                futureCandleSticks.AddRange(_binanceClient.GetCandleSticks(_request.TradingPair, _request.Interval, from, dt).Result);
+                LoadCandleSticksPerTicker(from, dt);
                 from = dt;
             }
-            
-            StartTime = futureCandleSticks.First().OpenDateTime;
-            //loop through each candle and apply the algorthm to determine buy and sell oppertunities
-            var lastPrice = 0m;
-            foreach (Candlestick futureCandleStick in futureCandleSticks)
+        }
+
+        private void LoadCandleSticksPerTicker(DateTime from, DateTime dt)
+        {
+            var candlesticks = new Dictionary<string, List<Candlestick>>();
+            foreach (var ticker in _request.TradingPairs)
             {
-                technicalAnalysis.AddCandleStick(futureCandleStick);
-                var analysisResults = technicalAnalysis.RunAlgorthm();
-                tradingStrategy.Process(analysisResults);
-                lastPrice = futureCandleStick.Close;
-                FinishTime = futureCandleStick.CloseDateTime;
+                candlesticks.Add(ticker, _binanceClient.GetCandleSticks(ticker, _request.Interval, from, dt).Result.ToList());
             }
-            tradingStrategy.ClosePosition(lastPrice);
+            int count = candlesticks.First().Value.Count();
+            
+            for (int i = 0; i < count ; i++)
+            {
+                var CandleSticksByTime = new Dictionary<string, Candlestick>();
+                foreach (var kvp in candlesticks)
+                {
+                    CandleSticksByTime.Add(kvp.Key, kvp.Value[i]);
+                }
+                CandleSticks.Enqueue(CandleSticksByTime);
+            }
+        }
+
+        private IDictionary<string, Candlestick> GetNextCandleSticks()
+        {
+            while(CandleSticks.Count==0 && !IsLastCandleStick)
+            {
+                //Wait 1 second.
+                Thread.Sleep(1000);
+            }
+            var candlesticks = CandleSticks.Dequeue();
+            var closeDT = _request.To.AddMilliseconds(-1);
+            var dt = candlesticks.First().Value.CloseDateTime;
+            if (dt == closeDT) IsLastCandleStick = true;
+            return candlesticks;
+        }
+
+        public bool ProcessCandleSticks(IDictionary<string, Candlestick> candlestick)
+        {
+            //Process 1 candlestick for each pair.
+            technicalAnalysis.AddCandleSticks(candlestick);
+            tradingStrategy.Process(technicalAnalysis.RunAlgorthm());
+            foreach (var item in candlestick)
+            {
+                LastPrices[item.Key] = item.Value.Close;
+            }
+            FinishTime = candlestick.First().Value.CloseDateTime;
+
+            return !IsLastCandleStick;
+        }
+
+        public void FinishTrading()
+        {
+            tradingStrategy.ClosePositions(LastPrices);
             //store the result for any trades that are made
 
             _request.TradingResults = tradingStrategy.TradingResults();

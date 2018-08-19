@@ -20,5 +20,7 @@ namespace Ankur.Trading.Core.Trading_Algorthm
         public decimal Sold => sellTrade.Price * sellTrade.Quantity * -1;
         public decimal Pnl => Sold - Bought;
         public decimal PnlPercent => Math.Round(((Sold / Bought) -1) * 100,2);
+
+        public object Pair { get; set; }
     }
 }

@@ -26,6 +26,11 @@ namespace Ankur.Trading.Core
         {
             this._binanceClient = binanceClient;
             this._request = request;
+            foreach (var item in _request.TradingPairs)
+            {
+                AddTradingPair(item, _request.Interval, _request.From);
+            }
+            
         }
 
         public IEnumerable<TradingResult> TradingResults { get; set; }
@@ -98,7 +103,15 @@ namespace Ankur.Trading.Core
                     throw new ArgumentOutOfRangeException(nameof(interval), interval, null);
             }
         }
-        
+
+        internal void AddCandleSticks(IDictionary<string, Candlestick> candlestick)
+        {
+            foreach (var kvp in candlestick)
+            {
+                AddCandleStick(kvp.Key, kvp.Value);
+            }
+        }
+
         public IEnumerable<string> GetTradingOpportunities(string buy)
         {
             foreach (KeyValuePair<string, TradingPairInfo> tradingPairInfo in Pairs)
@@ -120,15 +133,20 @@ namespace Ankur.Trading.Core
             return Pairs.FirstOrDefault().Value._candleSticks;
         }
 
-        public void AddCandleStick(Candlestick futureCandleStick)
+        public void AddCandleStick(string ticker,Candlestick futureCandleStick)
         {
-            Pairs[_request.TradingPair].Add(futureCandleStick);
+            Pairs[ticker].Add(futureCandleStick);
         }
 
-        public AlgorthmResults RunAlgorthm()
+        public IEnumerable<AlgorthmResults> RunAlgorthm()
         {
+            var results = new List<AlgorthmResults>();
+            foreach (var kvp in Pairs)
+            {
+                results.Add(_algorthm.Evaulate(kvp.Key,kvp.Value));
+            }
+            return results;
             //first run the algorthm to determine if there is a trading opprtunity 
-            return _algorthm.Evaulate(Pairs[_request.TradingPair]);
             //produce some actions based on the results of the analysis
             //execute those actions, or check stop limits etc. Trading Stratgy object
             //3 options

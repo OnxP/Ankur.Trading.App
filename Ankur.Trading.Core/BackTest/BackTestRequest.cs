@@ -11,12 +11,13 @@ namespace Ankur.Trading.Core.BackTest
 {
     public class BackTestRequest : IRequest
     {
-        public string TradingPair { get; set; }
+        public List<string> TradingPairs { get; set; }
         public DateTime From { get; set; }
         public DateTime To { get; set; }
         public TimeInterval Interval { get; set; }
         public TradingAlgorthm Algorthm { get; set; }
         public decimal StartAmount { get; set; }
+        public decimal TradingAmount { get; set; }
         //not for simplicity the back test will make market limit orders the entry price.
         public OrderType OrderType { get; set; }
         public IEnumerable<TradingResult> TradingResults { get; set; }
