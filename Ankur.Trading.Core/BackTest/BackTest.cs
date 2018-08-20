@@ -21,11 +21,22 @@ namespace Ankur.Trading.Core.BackTest
 
         public DateTime StartTime { get; set; }
         public DateTime FinishTime { get; set; }
-        public Action<TradingResult> LogTrade { get; set; }
+
         //used to close positions at the end of backtesting.
         private Dictionary<string,decimal> LastPrices { get; set; }
         private Queue<Dictionary<string,Candlestick>> CandleSticks { get; set; }
         private bool IsLastCandleStick { get; set; }
+        public event TradingStrategy.LogHandler Log
+        {
+            add
+            {
+                tradingStrategy.Log += value;
+            }
+            remove
+            {
+                tradingStrategy.Log += value;
+            }
+        }
 
         private BinanceClient _binanceClient = new BinanceClient(new ApiClient(ConfigurationManager.AppSettings["ApiKey"],
             ConfigurationManager.AppSettings["ApiSecret"]), false);

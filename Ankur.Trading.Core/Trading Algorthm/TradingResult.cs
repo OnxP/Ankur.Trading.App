@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Ankur.Trading.Core.Trades;
+using System.Linq;
 
 namespace Ankur.Trading.Core.Trading_Algorthm
 {
@@ -7,6 +9,12 @@ namespace Ankur.Trading.Core.Trading_Algorthm
     {
         private Trade buyTrade;
         private Trade sellTrade;
+        private IEnumerable<Trade> transactionPair;
+
+        public TradingResult(IEnumerable<Trade> transactionPair) : this(transactionPair.First(), transactionPair.Last())
+        {
+            
+        }
 
         public TradingResult(Trade buyTrade, Trade sellTrade)
         {

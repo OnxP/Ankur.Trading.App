@@ -22,6 +22,7 @@ namespace Ankur.Trading.BackTesting
                 Interval = TimeInterval.Days_1,
                 Algorthm = TradingAlgorthm.SimpleSMA,
                 StartAmount = 1m,
+                TradingAmount = 0.5m,
                 OrderType = OrderType.LIMIT
             };
 
@@ -30,15 +31,15 @@ namespace Ankur.Trading.BackTesting
             //the system can then make decisions at which points to buy and sell (simple SMA strategy to start with).
             //once the processing has been completed the result are displayed, each trade with buy price and sell price and percentage profit.
             var backTest = new BackTest(request);
-            backTest.LogTrade += LogTrade;
+            backTest.Log += LogTrade;
             //TODO make this process ASYNC.
             Console.WriteLine($"Starting Amount: {request.StartAmount}btc");
             backTest.StartTrading();
 
             Console.WriteLine($"StartTime: {backTest.StartTime} FinishTime: {backTest.FinishTime}");
             Console.WriteLine($"BTC Finishing Amount: {request.FinalAmount}btc");
-            Console.WriteLine($"Total PNL - {request.TradingResults.Sum(x=>x.Pnl)}");
-            Console.WriteLine($"Total % profit - {CalculatePercent(request)}");
+            //Console.WriteLine($"Total PNL - {request.TradingResults.Sum(x=>x.Pnl)}");
+            //Console.WriteLine($"Total % profit - {CalculatePercent(request)}");
 
             Console.ReadKey();
         }

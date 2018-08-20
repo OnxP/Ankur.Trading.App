@@ -30,7 +30,7 @@ namespace Ankur.Trading.Core.Broker
         //quantity is always in BTC.
         internal IEnumerable<Trade> MakeTransaction(TradeAction action,string ticker,decimal quantity,decimal lastPrice = 0m)
         {
-            var btcQuantity = action == TradeAction.Buy ? -quantity : CalculateQuantity(lastPrice, quantity);
+            var btcQuantity = action == TradeAction.Buy ? -quantity : CalculateBtcQuantity(lastPrice,quantity);
             var localQuantity = action == TradeAction.Buy ? CalculateQuantity(lastPrice, quantity) : -quantity;
             var list = new List<Trade>();
             if (TestTrade)
@@ -49,6 +49,11 @@ namespace Ankur.Trading.Core.Broker
                 list.Add( new Trade(Order,action));
             }
             return list;
+        }
+
+        private decimal CalculateBtcQuantity(decimal currentPrice, decimal quantity)
+        {
+            return Math.Round(quantity * currentPrice, 2);
         }
 
         private decimal CalculateQuantity(decimal currentPrice, decimal quantity)

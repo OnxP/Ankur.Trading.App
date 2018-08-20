@@ -8,7 +8,7 @@ namespace Ankur.Trading.Core.Trades
 {
     public class Position
     {
-        public bool Open => Trades.Count >= 1 && Quantity != 0;
+        public bool Open => Trades.Count >= 1 || Quantity != 0;
         public DateTime OpenTime { get; set; }
         public DateTime CloseTime { get; set; }
         public decimal Quantity => Trades.Sum(x => x.Quantity) + StartingAmount;

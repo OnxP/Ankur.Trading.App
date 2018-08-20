@@ -25,19 +25,25 @@ namespace Ankur.Trading.Core.Trading_Strategy
         private Position BtcPosition => CurrentPosition.First(c => c.Ticker == "btc");
         public decimal CurrentBtcAmount => BtcPosition.Quantity;
 
+        public delegate void LogHandler(TradingResult result);
+
+        public event LogHandler Log;
+
         public TradingStrategy(BinanceClient binanceClient, BackTestRequest request)
         {
             broker = new Broker.Broker(binanceClient,request);
             _request = request;
             CurrentPosition = new List<Position>();
-            var BtcPosition = new Position("btc",_request.StartAmount);
-            CurrentPosition.Add(BtcPosition);
+            var btcPosition = new Position("btc",0);
+            btcPosition.Add(new Trade("btc", _request.StartAmount));
+            CurrentPosition.Add(btcPosition);
             foreach (var ticker in _request.TradingPairs)
             {
                 var ccy = ticker.Substring(0, 3);
                 if (CurrentPosition.Select(x => x.Ticker == ccy).Count() > 0) continue;
                 CurrentPosition.Add(new Position(ccy,0));
             }
+            
         }
 
         public void Process(IEnumerable<AlgorthmResults> analysisResults)
@@ -71,7 +77,8 @@ namespace Ankur.Trading.Core.Trading_Strategy
         public void BuyAction(AlgorthmResults results)
         {
             var ticker = results.ticker.Substring(0, 3);
-            if (CurrentPosition.First(x => x.Ticker == ticker) == null)
+            var currentPosistion = CurrentPosition.Where(x => x.Ticker == ticker);
+            if (currentPosistion.Count() == 0)
             {
                 CurrentPosition.Add(new Position(ticker,0));
             }
@@ -82,6 +89,7 @@ namespace Ankur.Trading.Core.Trading_Strategy
                 var transactionPair = broker.MakeTransaction(results.Action, results.ticker, _request.TradingAmount, results.LastPrice);
                 CurrentPosition.First(x=>x.Ticker == ticker).Add(transactionPair.First());
                 BtcPosition.Add(transactionPair.Last());
+                Log?.Invoke(new TradingResult(transactionPair));
             }
         }
 
@@ -94,7 +102,7 @@ namespace Ankur.Trading.Core.Trading_Strategy
                 var transactionPair = broker.MakeTransaction(results.Action, results.ticker, position.Quantity, results.LastPrice);
                 position.Add(transactionPair.First());
                 BtcPosition.Add(transactionPair.Last());
-
+                Log?.Invoke(new TradingResult(transactionPair));
             }
         }
 
