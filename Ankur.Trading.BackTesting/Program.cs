@@ -16,10 +16,10 @@ namespace Ankur.Trading.BackTesting
             //PARAMS
             BackTestRequest request = new BackTestRequest
             {
-                TradingPairs = new List<string> { "eosbtc", "ethbtc" },
+                TradingPairs = new List<string> { "eosbtc"},
                 From = new DateTime(2018, 01, 20),
                 To = new DateTime(2018, 07, 20),
-                Interval = TimeInterval.Days_1,
+                Interval = TimeInterval.Hours_2,
                 Algorthm = TradingAlgorthm.SimpleSMA,
                 StartAmount = 1m,
                 TradingAmount = 0.5m,
@@ -35,7 +35,7 @@ namespace Ankur.Trading.BackTesting
             //TODO make this process ASYNC.
             Console.WriteLine($"Starting Amount: {request.StartAmount}btc");
             backTest.StartTrading();
-
+            backTest.FinishTrading();
             Console.WriteLine($"StartTime: {backTest.StartTime} FinishTime: {backTest.FinishTime}");
             Console.WriteLine($"BTC Finishing Amount: {request.FinalAmount}btc");
             //Console.WriteLine($"Total PNL - {request.TradingResults.Sum(x=>x.Pnl)}");
@@ -54,9 +54,9 @@ namespace Ankur.Trading.BackTesting
 
         }
 
-        public static void LogTrade(TradingResult tradingResult)
+        public static void LogTrade(TradingLog tradingResult)
         {
-            Console.WriteLine($"Pair: {tradingResult.Pair} Bought: {tradingResult.Bought} Sold: {tradingResult.Sold} PNL: {tradingResult.Pnl} - {tradingResult.PnlPercent}");
+            Console.WriteLine($"Pair: {tradingResult.Pair} Amount: {tradingResult.Quantity} BtcAmount: {tradingResult.BtcQuantity} Price:{tradingResult.Price}");
         }
     }
 }

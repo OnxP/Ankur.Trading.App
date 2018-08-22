@@ -25,7 +25,7 @@ namespace Ankur.Trading.Core.Trading_Strategy
         private Position BtcPosition => CurrentPosition.First(c => c.Ticker == "btc");
         public decimal CurrentBtcAmount => BtcPosition.Quantity;
 
-        public delegate void LogHandler(TradingResult result);
+        public delegate void LogHandler(TradingLog result);
 
         public event LogHandler Log;
 
@@ -89,7 +89,7 @@ namespace Ankur.Trading.Core.Trading_Strategy
                 var transactionPair = broker.MakeTransaction(results.Action, results.ticker, _request.TradingAmount, results.LastPrice);
                 CurrentPosition.First(x=>x.Ticker == ticker).Add(transactionPair.First());
                 BtcPosition.Add(transactionPair.Last());
-                Log?.Invoke(new TradingResult(transactionPair));
+                Log?.Invoke(new TradingLog(transactionPair));
             }
         }
 
@@ -102,15 +102,15 @@ namespace Ankur.Trading.Core.Trading_Strategy
                 var transactionPair = broker.MakeTransaction(results.Action, results.ticker, position.Quantity, results.LastPrice);
                 position.Add(transactionPair.First());
                 BtcPosition.Add(transactionPair.Last());
-                Log?.Invoke(new TradingResult(transactionPair));
+                Log?.Invoke(new TradingLog(transactionPair));
             }
         }
 
         internal void ClosePositions(IDictionary<string, decimal> lastPrices)
         {
-            foreach (Position result in CurrentPosition.Where(x => x.Open))
+            foreach (Position result in CurrentPosition.Where(x => x.Open && x.Ticker != "btc"))
             {
-                var transactionPair = broker.MakeTransaction(TradeAction.Sell, result.Ticker, result.Quantity, lastPrices[result.Ticker]);
+                var transactionPair = broker.MakeTransaction(TradeAction.Sell, result.Ticker, result.Quantity, lastPrices[result.Ticker+"btc"]);
                 result.Add(transactionPair.First());
                 BtcPosition.Add(transactionPair.Last());
             }

@@ -58,6 +58,7 @@
     <Compile Include="Trading Algorthm\Algorthm.cs" />
     <Compile Include="Trading Algorthm\AlgorthmResults.cs" />
     <Compile Include="Trading Algorthm\TradingAlgorthm.cs" />
+    <Compile Include="Trading Algorthm\TradingLog.cs" />
     <Compile Include="Trading Algorthm\TradingResult.cs" />
     <Compile Include="TradingPairInfo.cs" />
     <Compile Include="Trading Strategy\TradingStrategy.cs" />

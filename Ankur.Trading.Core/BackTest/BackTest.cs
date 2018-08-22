@@ -55,23 +55,28 @@ namespace Ankur.Trading.Core.BackTest
             }
         }
 
-        public void StartTrading()
+        public async void StartTrading()
         {
             StartTime = _request.From;
             //First Load data 100 candles starting from the FROM date.
-            
-            //get the candles for the from and to dates
-            LoadAllCandleSticks();
 
+            //get the candles for the from and to dates
+            Task<bool> task = LoadCandleSticks();
+            task.Start();
             //loop through each candle and apply the algorthm to determine buy and sell oppertunities
 
-            while (ProcessCandleSticks(GetNextCandleSticks()))
-            {
-            };
+            while (ProcessCandleSticks(GetNextCandleSticks())) { }
+
+            await task;
             
         }
 
-        private void LoadAllCandleSticks()
+        private Task<bool> LoadCandleSticks()
+        {
+            return new Task<bool>(LoadAllCandleSticks);
+        }
+
+        private bool LoadAllCandleSticks()
         {
             var from = _request.From;
             foreach (DateTime dt in SplitDates(_request.Interval, _request.From, _request.To))
@@ -79,6 +84,8 @@ namespace Ankur.Trading.Core.BackTest
                 LoadCandleSticksPerTicker(from, dt);
                 from = dt;
             }
+            IsLastCandleStick = true;
+            return IsLastCandleStick;
         }
 
         private void LoadCandleSticksPerTicker(DateTime from, DateTime dt)
@@ -103,7 +110,7 @@ namespace Ankur.Trading.Core.BackTest
 
         private IDictionary<string, Candlestick> GetNextCandleSticks()
         {
-            while(CandleSticks.Count==0 && !IsLastCandleStick)
+            while (CandleSticks.Count == 0 && !IsLastCandleStick)
             {
                 //Wait 1 second.
                 Thread.Sleep(1000);
@@ -134,7 +141,7 @@ namespace Ankur.Trading.Core.BackTest
             tradingStrategy.ClosePositions(LastPrices);
             //store the result for any trades that are made
 
-            _request.TradingResults = tradingStrategy.TradingResults();
+            //_request.TradingResults = tradingStrategy.TradingResults();
             _request.FinalAmount = tradingStrategy.CurrentBtcAmount;
         }
 
