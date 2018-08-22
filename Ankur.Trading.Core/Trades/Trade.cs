@@ -16,9 +16,7 @@ namespace Ankur.Trading.Core.Trades
         {
             this.Symbol = result.Symbol;
             this.Time = DateTimeOffset.FromUnixTimeMilliseconds(result.Time).DateTime;
-            this.Price = result.Price;
             this.Quantity = result.ExecutedQty;
-            this.Action = action;
         }
 
         public Trade(string pair, decimal quantity)
@@ -28,19 +26,19 @@ namespace Ankur.Trading.Core.Trades
             this.Quantity = quantity;
         }
 
-        public Trade(string pair,decimal currentPrice,decimal quantity,TradeAction action)
+        public Trade(string pair,decimal currentPrice,decimal quantity)
         {
             this.Symbol = pair;
             this.Time = DateTime.Now;
-            this.Price = currentPrice;
             this.Quantity = quantity;
-            this.Action = action;
         }
 
-        public TradeAction Action { get; set; }
+        public TradeAction Action => Quantity > 0 ? TradeAction.Buy : TradeAction.Sell;
         public DateTime Time { get; private set; }
-        public decimal Price { get; private set; }
+        public decimal Price => Math.Round(BtcQuantity / Quantity * -1,6);
         public decimal Quantity { get; private set; }
         public string Symbol { get; private set; }
+        public Trade CounterTrade { get; set; }
+        public decimal BtcQuantity => CounterTrade.Quantity;
     }
 }

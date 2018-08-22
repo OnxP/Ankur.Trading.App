@@ -141,7 +141,7 @@ namespace Ankur.Trading.Core.BackTest
             tradingStrategy.ClosePositions(LastPrices);
             //store the result for any trades that are made
 
-            //_request.TradingResults = tradingStrategy.TradingResults();
+            _request.TradingResults = tradingStrategy.TradingResults();
             _request.FinalAmount = tradingStrategy.CurrentBtcAmount;
         }
 

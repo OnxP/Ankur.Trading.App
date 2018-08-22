@@ -38,9 +38,12 @@ namespace Ankur.Trading.Core.Broker
                 //can't get the latest price for back testing, need to use the close price from the last candle
                 //list.Add(new Trade(ticker, lastPrice, action == TradeAction.Buy ? CalculateQuantity(lastPrice, quantity) : -quantity,action));
                 //paired transaction
-                list.Add(new Trade(ticker, localQuantity));
+                var trade = new Trade(ticker, localQuantity);
+                var btcTrade = new Trade("btc", btcQuantity);
+                trade.CounterTrade = btcTrade;
+                list.Add(trade);
                 //BTC transaction
-                list.Add(new Trade("btc", btcQuantity));
+                list.Add(btcTrade);
             }
             else
             {   //goes to binance and places the transaction.

@@ -31,6 +31,5 @@ namespace Ankur.Trading.Core.Trades
         {
             Trades.Add(trade);
         }
-       
     }
 }

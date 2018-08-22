@@ -37,11 +37,22 @@ namespace Ankur.Trading.BackTesting
             backTest.StartTrading();
             backTest.FinishTrading();
             Console.WriteLine($"StartTime: {backTest.StartTime} FinishTime: {backTest.FinishTime}");
+
+            DisplayTrades(request.TradingResults);
+
             Console.WriteLine($"BTC Finishing Amount: {request.FinalAmount}btc");
-            //Console.WriteLine($"Total PNL - {request.TradingResults.Sum(x=>x.Pnl)}");
-            //Console.WriteLine($"Total % profit - {CalculatePercent(request)}");
+            Console.WriteLine($"Total PNL - {request.TradingResults.Sum(x=>x.Pnl)}");
+            Console.WriteLine($"Total % profit - {CalculatePercent(request)}");
 
             Console.ReadKey();
+        }
+
+        private static void DisplayTrades(IEnumerable<TradingResult> tradingResults)
+        {
+            foreach (var result in tradingResults)
+            {
+                Console.WriteLine(result.ToString());
+            }
         }
 
         public static decimal CalculatePercent(BackTestRequest request)

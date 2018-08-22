@@ -64,6 +64,15 @@ namespace Ankur.Trading.Core.Trading_Strategy
         {
             //assume buy and sell pairs are store next to each other in the list.
             var list = new List<TradingResult>();
+            foreach (var position in CurrentPosition.Where(x=>x.Ticker!="btc"))
+            {
+                var trades = position.Trades.ToList();
+                for (int i = 0; i < trades.Count(); i++)
+                {
+                    list.Add(new TradingResult(trades[i],trades[++i]));
+                }
+            }
+                
             //for(int i =1; i<CurrentPosition.Trades.Count;i+=2)
             //{
             //    var buyTrade = CurrentPosition.Trades[i - 1];
