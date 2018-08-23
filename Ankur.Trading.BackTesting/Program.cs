@@ -16,10 +16,10 @@ namespace Ankur.Trading.BackTesting
             //PARAMS
             BackTestRequest request = new BackTestRequest
             {
-                TradingPairs = new List<string> { "eosbtc"},
+                TradingPairs = new List<string> { "eosbtc","arnbtc"},
                 From = new DateTime(2018, 01, 20),
                 To = new DateTime(2018, 07, 20),
-                Interval = TimeInterval.Hours_2,
+                Interval = TimeInterval.Hours_1,
                 Algorthm = TradingAlgorthm.SimpleSMA,
                 StartAmount = 1m,
                 TradingAmount = 0.5m,

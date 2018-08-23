@@ -44,12 +44,14 @@
     <Compile Include="BackTest\BackTest.cs" />
     <Compile Include="BackTest\BackTestRequest.cs" />
     <Compile Include="Broker\Broker.cs" />
-    <Compile Include="Indicators\Ema.cs" />
+    <Compile Include="Indicators\Ma\Ema.cs" />
+    <Compile Include="Indicators\Macd.cs" />
+    <Compile Include="Indicators\Oscillator\ShochRsi.cs" />
     <Compile Include="LinkedList\CandelStickInfo.cs" />
-    <Compile Include="Indicators\Sma.cs" />
+    <Compile Include="Indicators\Ma\Sma.cs" />
     <Compile Include="LinkedList\ILinkedListItem.cs" />
     <Compile Include="LinkedList\LinkedListAbstract.cs" />
-    <Compile Include="Oscillator\Rsi.cs" />
+    <Compile Include="Indicators\Oscillator\Rsi.cs" />
     <Compile Include="Request\IRequest.cs" />
     <Compile Include="TechnicalAnalysis.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -77,5 +79,6 @@
       <Name>Binance.API.Csharp.Client</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

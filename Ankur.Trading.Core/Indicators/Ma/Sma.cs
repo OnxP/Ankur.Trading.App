@@ -10,14 +10,19 @@ namespace Ankur.Trading.Core.Indicators
 {
     public class Sma
     {
-        private IEnumerable<Candlestick> _candleSticks;
+        private IEnumerable<decimal> _candleSticks;
         public IEnumerable<decimal> sma;
         private int Length;
 
         public decimal SmaValue => sma.Last();
         public decimal Gradient { get; set; }
 
-        public Sma(IEnumerable<Candlestick> candleSticks, int length)
+        public Sma(IEnumerable<Candlestick> candleSticks, int length): this(candleSticks.Select(x => x.Close),length)
+        {
+           
+        }
+
+        public Sma(IEnumerable<decimal> candleSticks, int length)
         {
             _candleSticks = candleSticks;
             this.Length = length;
@@ -28,9 +33,9 @@ namespace Ankur.Trading.Core.Indicators
         {
             List<decimal> smaList = new List<decimal>();
             Queue<decimal> queue = new Queue<decimal>(Length+1);
-            foreach (Candlestick candlestick in _candleSticks)
+            foreach (var candlestick in _candleSticks)
             {
-                queue.Enqueue(candlestick.Close);
+                queue.Enqueue(candlestick);
                 if (queue.Count < Length) continue;
                 if (queue.Count > Length) queue.Dequeue();
                 var sum = queue.ToList().Sum();
@@ -43,14 +48,14 @@ namespace Ankur.Trading.Core.Indicators
         public void Add(Candlestick futureCandleStick)
         {
             var list = _candleSticks.ToList();
-            list.Add(futureCandleStick);
-            _candleSticks = list.OrderByDescending(x=>x.CloseDateTime);
+            list.Add(futureCandleStick.Close);
+            //_candleSticks = list.OrderByDescending(x=>x.CloseDateTime);
             CalculateCurrentSma();
         }
 
         private void CalculateCurrentSma()
         {
-            var sum = _candleSticks.Take(Length).Sum(x => x.Close);
+            var sum = _candleSticks.Reverse().Take(Length).Sum();
             var list = sma.ToList();
             list.Add(sum/Length);
             sma = list;
