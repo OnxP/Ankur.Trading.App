@@ -40,7 +40,8 @@ namespace Ankur.Trading.Core.Trading_Strategy
             foreach (var ticker in _request.TradingPairs)
             {
                 var ccy = ticker.Substring(0, 3);
-                if (CurrentPosition.Select(x => x.Ticker == ccy).Count() > 0) continue;
+                var pos = CurrentPosition.Where(x => x.Ticker == ccy);
+                if (pos.Count() > 0) continue;
                 CurrentPosition.Add(new Position(ccy,0));
             }
             

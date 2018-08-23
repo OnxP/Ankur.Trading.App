@@ -47,15 +47,17 @@ namespace Ankur.Trading.Core.Indicators
 
         public void Add(Candlestick futureCandleStick)
         {
-            var list = _candleSticks.ToList();
+            var list = _candleSticks.Reverse().ToList();
             list.Add(futureCandleStick.Close);
+            _candleSticks = list;
+            _candleSticks.Reverse();
             //_candleSticks = list.OrderByDescending(x=>x.CloseDateTime);
             CalculateCurrentSma();
         }
 
         private void CalculateCurrentSma()
         {
-            var sum = _candleSticks.Reverse().Take(Length).Sum();
+            var sum = _candleSticks.Take(Length).Sum();
             var list = sma.ToList();
             list.Add(sum/Length);
             sma = list;

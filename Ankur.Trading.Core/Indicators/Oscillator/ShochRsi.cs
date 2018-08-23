@@ -29,15 +29,22 @@ namespace Ankur.Trading.Core.Indicators.Oscillator
             this._shochRsiLength = shochRsiLength;
             this._smoothK = smoothK;
             this._smoothD = smoothD;
-            rsi = new Rsi(candleSticks, _rsiLength);
             
-            CalculateShochRsi();
-            K = new Sma(rsi.rsi.Select(x => x * 100), _smoothK);
-            D = new Sma(K.sma, _smoothD);
+            
+            CalculateShochRsi(candleSticks);
+            
+            
         }
 
-        private void CalculateShochRsi()
+        private void CalculateKandD()
         {
+            K = new Sma(shochRsi.Select(x => x * 100), _smoothK);
+            D = new Sma(K.sma.Reverse(), _smoothD);
+        }
+
+        private void CalculateShochRsi(IEnumerable<Candlestick> candleSticks)
+        {
+            rsi = new Rsi(candleSticks, _rsiLength);
             var rsiList = rsi.rsi.ToList();
             var list = new List<decimal>();        
             var candlesticks = _candleSticks.Skip(_rsiLength + _shochRsiLength).ToList();
@@ -51,8 +58,17 @@ namespace Ankur.Trading.Core.Indicators.Oscillator
                 list.Add(shochrsi);
             }
             shochRsi = list;
+            shochRsi.Reverse();
+            CalculateKandD();
         }
 
-        
+        internal void Add(Candlestick futureCandleStick)
+        {
+            var list = new List<Candlestick>();
+            list.Add(futureCandleStick);
+            list.AddRange(_candleSticks);
+            _candleSticks = list;
+            CalculateShochRsi(list);
+        }
     }
 }

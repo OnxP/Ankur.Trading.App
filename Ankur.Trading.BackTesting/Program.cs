@@ -20,7 +20,7 @@ namespace Ankur.Trading.BackTesting
                 From = new DateTime(2018, 01, 20),
                 To = new DateTime(2018, 07, 20),
                 Interval = TimeInterval.Hours_1,
-                Algorthm = TradingAlgorthm.SimpleSMA,
+                Algorthm = TradingAlgorthm.LongShochRsi,
                 StartAmount = 1m,
                 TradingAmount = 0.5m,
                 OrderType = OrderType.LIMIT
