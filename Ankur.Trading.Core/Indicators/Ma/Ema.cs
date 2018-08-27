@@ -10,17 +10,21 @@ namespace Ankur.Trading.Core.Indicators
 {
     public class Ema
     {
-        private IEnumerable<Candlestick> _candleSticks;
+        private IEnumerable<decimal> _closePrices;
         public IEnumerable<decimal> ema;
         private readonly int Length;
         private decimal Multiplier => 2 / (decimal)(Length + 1);
 
-        public decimal EmaValue => ema.Last();
+        public decimal EmaValue => ema.First();
         public decimal Gradient { get; set; }
 
-        public Ema(IEnumerable<Candlestick> candleSticks, int length)
+        public Ema(IEnumerable<Candlestick> candleSticks, int length) : this(candleSticks.Select(x => x.Close),length)
         {
-            _candleSticks = candleSticks;
+        }
+
+        public Ema(IEnumerable<decimal> candleSticks, int length)
+        {
+            _closePrices = candleSticks;
             this.Length = length;
             CalculateEma();
         }
@@ -28,41 +32,32 @@ namespace Ankur.Trading.Core.Indicators
         private void CalculateEma()
         {
             List<decimal> emaList = new List<decimal>();
-            Queue<decimal> queue = new Queue<decimal>(Length+1);
-            decimal previousValue = 0m;
-            foreach (Candlestick candlestick in _candleSticks)
-            {
-                if (previousValue == 0m)
-                {
-                    queue.Enqueue(candlestick.Close);
-                    if (queue.Count < Length) continue;
-                    if (queue.Count > Length) queue.Dequeue();
-                    var sum = queue.ToList().Sum();
-                    previousValue = sum / Length;
-                    emaList.Add(previousValue);
-                }
-                else
-                {
-                    previousValue = (candlestick.Close - previousValue) * Multiplier + previousValue;
-                    emaList.Add(previousValue);
-                }
-            }
+            List<decimal> closePrices = _closePrices.ToList();
+            closePrices.Reverse();
 
+            for (int i = Length -1 ; i < closePrices.Count(); i++)
+            {
+                if (i == Length-1) emaList.Add(closePrices.Take(Length).Sum()/Length);
+                else emaList.Add((closePrices[i] - emaList.Last()) * Multiplier + emaList.Last());
+            }
+            emaList.Reverse();
             ema = emaList;
         }
 
         public void Add(Candlestick futureCandleStick)
         {
-            var list = _candleSticks.ToList();
-            list.Add(futureCandleStick);
-            _candleSticks = list.OrderByDescending(x => x.CloseDateTime);
+            var list = new List<decimal>();
+            list.Add(futureCandleStick.Close);
+            list.AddRange(_closePrices);
+            _closePrices = list;
             CalculateCurrentEma(futureCandleStick);
         }
 
         private void CalculateCurrentEma(Candlestick futureCandleStick)
         {
-            var list = ema.ToList();
+            var list = new List<decimal>();
             list.Add((futureCandleStick.Close - EmaValue) * Multiplier + EmaValue);
+            list.AddRange(ema);
             ema = list;
         }
     }

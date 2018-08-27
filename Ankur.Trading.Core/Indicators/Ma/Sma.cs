@@ -10,11 +10,11 @@ namespace Ankur.Trading.Core.Indicators
 {
     public class Sma
     {
-        private IEnumerable<decimal> _candleSticks;
+        private IEnumerable<decimal> _closePrices;
         public IEnumerable<decimal> sma;
         private int Length;
 
-        public decimal SmaValue => sma.Last();
+        public decimal SmaValue => sma.First();
         public decimal Gradient { get; set; }
 
         public Sma(IEnumerable<Candlestick> candleSticks, int length): this(candleSticks.Select(x => x.Close),length)
@@ -24,7 +24,7 @@ namespace Ankur.Trading.Core.Indicators
 
         public Sma(IEnumerable<decimal> candleSticks, int length)
         {
-            _candleSticks = candleSticks;
+            _closePrices = candleSticks;
             this.Length = length;
             CalculateSma();
         }
@@ -33,13 +33,10 @@ namespace Ankur.Trading.Core.Indicators
         {
             List<decimal> smaList = new List<decimal>();
             Queue<decimal> queue = new Queue<decimal>(Length+1);
-            foreach (var candlestick in _candleSticks)
+
+            for ( int i = 0; i< _closePrices.Count() - Length + 1; i++)
             {
-                queue.Enqueue(candlestick);
-                if (queue.Count < Length) continue;
-                if (queue.Count > Length) queue.Dequeue();
-                var sum = queue.ToList().Sum();
-                smaList.Add(sum/Length);
+                smaList.Add(_closePrices.Skip(i).Take(Length).Sum()/Length);
             }
 
             sma = smaList;
@@ -47,17 +44,17 @@ namespace Ankur.Trading.Core.Indicators
 
         public void Add(Candlestick futureCandleStick)
         {
-            var list = _candleSticks.Reverse().ToList();
+            var list = new List<decimal>();
             list.Add(futureCandleStick.Close);
-            _candleSticks = list;
-            _candleSticks.Reverse();
+            list.AddRange(_closePrices);
+            _closePrices = list;
             //_candleSticks = list.OrderByDescending(x=>x.CloseDateTime);
             CalculateCurrentSma();
         }
 
         private void CalculateCurrentSma()
         {
-            var sum = _candleSticks.Take(Length).Sum();
+            var sum = _closePrices.Take(Length).Sum();
             var list = sma.ToList();
             list.Add(sum/Length);
             sma = list;

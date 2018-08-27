@@ -31,6 +31,7 @@ namespace Ankur.Trading.Test.Indicators
                 new Candlestick() {Close = 20},
                 new Candlestick() {Close = 21}
             };
+            list.Reverse();
             return list;
         }
 
