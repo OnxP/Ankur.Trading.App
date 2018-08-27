@@ -8,14 +8,14 @@ using Binance.API.Csharp.Client.Models.Market;
 
 namespace Ankur.Trading.Core.Indicators
 {
-    public class Ema
+    public class Ema : IIndicator
     {
         private IEnumerable<decimal> _closePrices;
         public IEnumerable<decimal> ema;
         private readonly int Length;
         private decimal Multiplier => 2 / (decimal)(Length + 1);
 
-        public decimal EmaValue => ema.First();
+        public decimal Value => ema.First();
         public decimal Gradient { get; set; }
 
         public Ema(IEnumerable<Candlestick> candleSticks, int length) : this(candleSticks.Select(x => x.Close),length)
@@ -44,7 +44,7 @@ namespace Ankur.Trading.Core.Indicators
             ema = emaList;
         }
 
-        public void Add(Candlestick futureCandleStick)
+        public void AddCandleStick(Candlestick futureCandleStick)
         {
             var list = new List<decimal>();
             list.Add(futureCandleStick.Close);
@@ -56,7 +56,7 @@ namespace Ankur.Trading.Core.Indicators
         private void CalculateCurrentEma(Candlestick futureCandleStick)
         {
             var list = new List<decimal>();
-            list.Add((futureCandleStick.Close - EmaValue) * Multiplier + EmaValue);
+            list.Add((futureCandleStick.Close - Value) * Multiplier + Value);
             list.AddRange(ema);
             ema = list;
         }

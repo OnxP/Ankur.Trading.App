@@ -6,10 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Schema;
 using Binance.API.Csharp.Client.Models.Market;
+using Ankur.Trading.Core.Indicators;
 
 namespace Ankur.Trading.Core.Oscillator
 {
-    public class Rsi
+    public class Rsi:IIndicator
     {
         private readonly IEnumerable<Candlestick> _candleSticks;
         public IEnumerable<decimal> rsi;
@@ -79,6 +80,11 @@ namespace Ankur.Trading.Core.Oscillator
             var rs = avgGain / avgLoss;
 
             return 100 - (100/ (1+rs));
+        }
+
+        public void AddCandleStick(Candlestick candleStick)
+        {
+            throw new NotImplementedException();
         }
     }
 }

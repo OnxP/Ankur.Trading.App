@@ -39,28 +39,28 @@ namespace Ankur.Trading.Test.Indicators
         public void Ema_Test_5()
         {
             Ema sma = new Ema(BuildCandleSticks(),5);
-            Assert.AreEqual(19,sma.EmaValue);
+            Assert.AreEqual(19,sma.Value);
         }
 
         [TestMethod]
         public void Ema_Test_3()
         {
             Ema sma = new Ema(BuildCandleSticks(), 3);
-            Assert.AreEqual(20, sma.EmaValue);
+            Assert.AreEqual(20, sma.Value);
         }
 
         [TestMethod]
         public void Ema_Test_7()
         {
             Ema sma = new Ema(BuildCandleSticks(), 7);
-            Assert.AreEqual(18, sma.EmaValue);
+            Assert.AreEqual(18, sma.Value);
         }
 
         [TestMethod]
         public void Ema_Test_9()
         {
             Ema sma = new Ema(BuildCandleSticks(), 9);
-            Assert.AreEqual(17, sma.EmaValue);
+            Assert.AreEqual(17, sma.Value);
         }
 
 

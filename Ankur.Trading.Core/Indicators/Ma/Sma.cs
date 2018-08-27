@@ -8,13 +8,13 @@ using Binance.API.Csharp.Client.Models.Market;
 
 namespace Ankur.Trading.Core.Indicators
 {
-    public class Sma
+    public class Sma : IIndicator
     {
         private IEnumerable<decimal> _closePrices;
         public IEnumerable<decimal> sma;
         private int Length;
 
-        public decimal SmaValue => sma.First();
+        public decimal Value => sma.First();
         public decimal Gradient { get; set; }
 
         public Sma(IEnumerable<Candlestick> candleSticks, int length): this(candleSticks.Select(x => x.Close),length)
@@ -42,7 +42,7 @@ namespace Ankur.Trading.Core.Indicators
             sma = smaList;
         }
 
-        public void Add(Candlestick futureCandleStick)
+        public void AddCandleStick(Candlestick futureCandleStick)
         {
             var list = new List<decimal>();
             list.Add(futureCandleStick.Close);

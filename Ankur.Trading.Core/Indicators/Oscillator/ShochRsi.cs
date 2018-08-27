@@ -8,7 +8,7 @@ using Ankur.Trading.Core.Oscillator;
 
 namespace Ankur.Trading.Core.Indicators.Oscillator
 {
-    public class ShochRsi
+    public class ShochRsi : IIndicator
     {
         public IEnumerable<decimal> shochRsi;
         private IEnumerable<Candlestick> _candleSticks;
@@ -16,8 +16,9 @@ namespace Ankur.Trading.Core.Indicators.Oscillator
         private int _shochRsiLength;
         private int _smoothK;
         private int _smoothD;
-        public decimal KValue => K.SmaValue;
-        public decimal DValue => D.SmaValue;
+        public decimal KValue => K.Value;
+        public decimal DValue => D.Value;
+        public decimal Value => K.Value - D.Value;
         private Rsi rsi;
         private Sma K;
         private Sma D;
@@ -62,7 +63,7 @@ namespace Ankur.Trading.Core.Indicators.Oscillator
             CalculateKandD();
         }
 
-        internal void Add(Candlestick futureCandleStick)
+        public void AddCandleStick(Candlestick futureCandleStick)
         {
             var list = new List<Candlestick>();
             list.Add(futureCandleStick);

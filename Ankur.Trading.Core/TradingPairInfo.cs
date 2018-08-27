@@ -5,6 +5,7 @@ using Ankur.Trading.Core.Indicators;
 using Binance.API.Csharp.Client.Models.Enums;
 using Binance.API.Csharp.Client.Models.Market;
 using Ankur.Trading.Core.Indicators.Oscillator;
+using Ankur.Trading.Core.Oscillator;
 
 namespace Ankur.Trading.Core
 {
@@ -19,6 +20,8 @@ namespace Ankur.Trading.Core
         public Dictionary<int,Ema> Ema = new Dictionary<int, Ema>();
 
         public ShochRsi stochRsi;
+        public Rsi rsi;
+        public Macd macd;
 
         public TradingPairInfo(string pair, TimeInterval interval, IEnumerable<Candlestick> candleSticks)
         {
@@ -42,22 +45,27 @@ namespace Ankur.Trading.Core
             Ema.Add(40,new Ema(_candleSticks,40));
 
             stochRsi = new ShochRsi(_candleSticks,14,14,8,8);
+            rsi = new Rsi(_candleSticks,14);
+            macd = new Macd(_candleSticks,12,26,9);
         }
 
         public void Add(Candlestick futureCandleStick)
         {
-            var candleSticks = _candleSticks.ToList<Candlestick>();
-            candleSticks.Add(futureCandleStick);
+            List<Candlestick> list = new List<Candlestick>();
+            list.Add(futureCandleStick);
+            list.AddRange(_candleSticks);
+            _candleSticks = list;
             foreach (KeyValuePair<int, Sma> keyValuePair in Sma)
             {
-                keyValuePair.Value.Add(futureCandleStick);
+                keyValuePair.Value.AddCandleStick(futureCandleStick);
             }
             foreach (KeyValuePair<int, Ema> keyValuePair in Ema)
             {
-                keyValuePair.Value.Add(futureCandleStick);
+                keyValuePair.Value.AddCandleStick(futureCandleStick);
             }
-            stochRsi.Add(futureCandleStick);
-            _candleSticks = candleSticks;
+            stochRsi.AddCandleStick(futureCandleStick);
+            rsi.AddCandleStick(futureCandleStick);
+            macd.AddCandleStick(futureCandleStick);
         }
     }
 }

@@ -116,8 +116,8 @@ namespace Ankur.Trading.Core
         {
             foreach (KeyValuePair<string, TradingPairInfo> tradingPairInfo in Pairs)
             {
-                var sma5 = tradingPairInfo.Value.Sma[5].SmaValue;
-                var sma10 = tradingPairInfo.Value.Sma[10].SmaValue;
+                var sma5 = tradingPairInfo.Value.Sma[5].Value;
+                var sma10 = tradingPairInfo.Value.Sma[10].Value;
                 var trade = sma5 > sma10 ? "BUY" : "SELL";
                 StringBuilder builder = new StringBuilder();
                 builder.Append($"Current Price: {tradingPairInfo.Value.CurrentPrice}");

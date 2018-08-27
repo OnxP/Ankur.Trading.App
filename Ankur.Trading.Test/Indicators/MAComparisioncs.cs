@@ -113,7 +113,7 @@ namespace Ankur.Trading.Test.Indicators
         public void Ema_Test_10()
         {
             var ema = new Ema(BuildCandleSticks(), 10);
-            Assert.AreEqual(22.916m, Math.Round(ema.EmaValue, 3));
+            Assert.AreEqual(22.916m, Math.Round(ema.Value, 3));
             var results = ema.ema.Select(value => Math.Round(value, 3)).ToList();
             Compare(EmaResults().ToList(), results);
         }
@@ -122,7 +122,7 @@ namespace Ankur.Trading.Test.Indicators
         public void Sma_Test_10()
         {
             var sma = new Sma(BuildCandleSticks(), 10);
-            Assert.AreEqual(23.131m, Math.Round(sma.SmaValue, 3));
+            Assert.AreEqual(23.131m, Math.Round(sma.Value, 3));
             var results = sma.sma.Select(value => Math.Round(value, 3)).ToList();
             Compare(SmaResults().ToList(), results);
         }
