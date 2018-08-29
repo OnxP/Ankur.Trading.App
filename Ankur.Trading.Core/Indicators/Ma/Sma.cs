@@ -15,7 +15,7 @@ namespace Ankur.Trading.Core.Indicators
         private int Length;
 
         public decimal Value => sma.First();
-        public decimal Gradient { get; set; }
+        public decimal Gradient => sma.First() - sma.ElementAt(1);
 
         public Sma(IEnumerable<Candlestick> candleSticks, int length): this(candleSticks.Select(x => x.Close),length)
         {
@@ -55,8 +55,9 @@ namespace Ankur.Trading.Core.Indicators
         private void CalculateCurrentSma()
         {
             var sum = _closePrices.Take(Length).Sum();
-            var list = sma.ToList();
+            var list = new List<decimal>();
             list.Add(sum/Length);
+            list.AddRange(sma);
             sma = list;
         }
     }

@@ -18,6 +18,7 @@ namespace Ankur.Trading.Core.Trading_Algorthm
 
         public TradeAction Action { get; set; }
         public decimal LastPrice { get; set; }
+        public DateTime CloseDateTime { get; set; }
     }
 
     public enum TradeAction { Buy, Sell, Wait}

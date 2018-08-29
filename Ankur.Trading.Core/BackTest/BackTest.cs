@@ -26,6 +26,7 @@ namespace Ankur.Trading.Core.BackTest
         private Dictionary<string,decimal> LastPrices { get; set; }
         private Queue<Dictionary<string,Candlestick>> CandleSticks { get; set; }
         private bool IsLastCandleStick { get; set; }
+        private bool CandleSticksLoaded { get; set; }
         public event TradingStrategy.LogHandler Log
         {
             add
@@ -65,7 +66,9 @@ namespace Ankur.Trading.Core.BackTest
             task.Start();
             //loop through each candle and apply the algorthm to determine buy and sell oppertunities
 
-            while (ProcessCandleSticks(GetNextCandleSticks())) { }
+            while (ProcessCandleSticks(GetNextCandleSticks())) {
+
+            }
 
             await task;
             
@@ -84,7 +87,7 @@ namespace Ankur.Trading.Core.BackTest
                 LoadCandleSticksPerTicker(from, dt);
                 from = dt;
             }
-            IsLastCandleStick = true;
+            CandleSticksLoaded = true;
             return IsLastCandleStick;
         }
 
@@ -110,7 +113,7 @@ namespace Ankur.Trading.Core.BackTest
 
         private IDictionary<string, Candlestick> GetNextCandleSticks()
         {
-            while (CandleSticks.Count == 0 && !IsLastCandleStick)
+            while (CandleSticks.Count == 0 && !CandleSticksLoaded)
             {
                 //Wait 1 second.
                 Thread.Sleep(1000);
@@ -118,7 +121,7 @@ namespace Ankur.Trading.Core.BackTest
             var candlesticks = CandleSticks.Dequeue();
             var closeDT = _request.To.AddMilliseconds(-1);
             var dt = candlesticks.First().Value.CloseDateTime;
-            if (dt == closeDT) IsLastCandleStick = true;
+            if (CandleSticks.Count == 0 && CandleSticksLoaded) IsLastCandleStick = true;
             return candlesticks;
         }
 

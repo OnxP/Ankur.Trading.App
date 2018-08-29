@@ -16,7 +16,7 @@ namespace Ankur.Trading.Core.Indicators
         private decimal Multiplier => 2 / (decimal)(Length + 1);
 
         public decimal Value => ema.First();
-        public decimal Gradient { get; set; }
+        public decimal Gradient => ema.First() - ema.ElementAt(1);
 
         public Ema(IEnumerable<Candlestick> candleSticks, int length) : this(candleSticks.Select(x => x.Close),length)
         {

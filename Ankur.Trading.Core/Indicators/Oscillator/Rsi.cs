@@ -12,15 +12,20 @@ namespace Ankur.Trading.Core.Oscillator
 {
     public class Rsi:IIndicator
     {
-        private readonly IEnumerable<Candlestick> _candleSticks;
+        
+        private IEnumerable<decimal> _closePrices;
         public IEnumerable<decimal> rsi;
         private readonly int _length;
 
         public decimal Value => rsi.Last();
         public decimal Gradient { get; set; }
 
-        public Rsi(IEnumerable<Candlestick> candleSticks, int length){
-            _candleSticks = candleSticks;
+        public Rsi(IEnumerable<Candlestick> candleSticks, int length) : this(candleSticks.Select(x => x.Close), length)
+        { }
+
+        public Rsi(IEnumerable<decimal> candleSticks, int length)
+        {
+            _closePrices = candleSticks;
             this._length = length;
             CalculateRsi();
         }
@@ -33,16 +38,35 @@ namespace Ankur.Trading.Core.Oscillator
             decimal previousClose = 0m;
             decimal previousAvgGain = 0m;
             decimal previousAvgLoss = 0m;
-            foreach (var candlestick in _candleSticks)
+
+
+            List<decimal> closePrices = _closePrices.ToList();
+            closePrices.Reverse();
+            //var differences = closePrices.Skip(1).Select((x, y) => x - closePrices[y - 1]);
+            //int j = 0;
+            //for (int i = _length - 1; i < closePrices.Count(); i++)
+            //{
+            //    var avgGain = differences.Skip(j).Take(_length).Where(x=> x>0).Sum();
+            //    var avgLoss = differences.Skip(j).Take(_length).Where(x=> x<0).Sum();
+            //    j++;
+
+            //}
+
+
+
+
+
+
+                foreach (var candlestick in closePrices)
             {
                 if (previousClose == 0m)
                 {
-                    previousClose = candlestick.Close;
+                    previousClose = candlestick;
                     continue;
                 }
 
-                decimal change = candlestick.Close - previousClose;
-                previousClose = candlestick.Close;
+                decimal change = candlestick - previousClose;
+                previousClose = candlestick;
                 var gain = 0m;
                 var loss = 0m;
 
@@ -56,9 +80,6 @@ namespace Ankur.Trading.Core.Oscillator
                 if (lossQueue.Count > _length) lossQueue.Dequeue();
 
                 if (gainQueue.Count != _length) continue;
-
-                
-
                 if(previousAvgGain ==0) previousAvgGain = gainQueue.Average();
                 else previousAvgGain = (previousAvgGain * (_length-1) + gain)/_length;
                 if (previousAvgLoss == 0) previousAvgLoss = lossQueue.Average();
@@ -84,7 +105,10 @@ namespace Ankur.Trading.Core.Oscillator
 
         public void AddCandleStick(Candlestick candleStick)
         {
-            throw new NotImplementedException();
+            var list = new List<decimal>();
+            list.Add(candleStick.Close);
+            list.AddRange(_closePrices);
+            CalculateRsi();
         }
     }
 }

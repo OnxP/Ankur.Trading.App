@@ -6,6 +6,7 @@ using Binance.API.Csharp.Client.Models.Enums;
 using Binance.API.Csharp.Client.Models.Market;
 using Ankur.Trading.Core.Indicators.Oscillator;
 using Ankur.Trading.Core.Oscillator;
+using System;
 
 namespace Ankur.Trading.Core
 {
@@ -14,7 +15,9 @@ namespace Ankur.Trading.Core
         private string pair;
         private TimeInterval interval;
         public IEnumerable<Candlestick> _candleSticks;
-        public decimal CurrentPrice => _candleSticks.Last().Close;
+        public decimal CurrentPrice => _candleSticks.First().Close;
+
+        public DateTime CloseDateTime => _candleSticks.First().CloseDateTime;
 
         public Dictionary<int,Sma> Sma = new Dictionary<int, Sma>();
         public Dictionary<int,Ema> Ema = new Dictionary<int, Ema>();

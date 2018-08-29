@@ -18,6 +18,14 @@ namespace Ankur.Trading.Core.Trading_Algorthm
             this.BtcTransaction = transactionPair.Last();
         }
 
+        public TradingLog(IEnumerable<Trade> transactionPair, DateTime closeTime)
+        {
+            this.transaction = transactionPair.First();
+            this.BtcTransaction = transactionPair.Last();
+            this.CloseTime = closeTime;
+        }
+
+        public DateTime CloseTime { get; set; }
         public string Pair => transaction.Symbol;
         public decimal Quantity => transaction.Quantity;
         public decimal BtcQuantity => BtcTransaction.Quantity;

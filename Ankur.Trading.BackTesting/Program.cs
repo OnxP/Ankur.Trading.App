@@ -16,11 +16,11 @@ namespace Ankur.Trading.BackTesting
             //PARAMS
             BackTestRequest request = new BackTestRequest
             {
-                TradingPairs = new List<string> { "eosbtc","arnbtc"},
-                From = new DateTime(2018, 01, 20),
-                To = new DateTime(2018, 07, 20),
-                Interval = TimeInterval.Hours_1,
-                Algorthm = TradingAlgorthm.LongShochRsi,
+                TradingPairs = new List<string> { "eosbtc"},
+                From = new DateTime(2018, 08, 25),
+                To = new DateTime(2018, 08, 29),
+                Interval = TimeInterval.Minutes_15,
+                Algorthm = TradingAlgorthm.Macd,
                 StartAmount = 1m,
                 TradingAmount = 0.5m,
                 OrderType = OrderType.LIMIT
@@ -67,7 +67,7 @@ namespace Ankur.Trading.BackTesting
 
         public static void LogTrade(TradingLog tradingResult)
         {
-            Console.WriteLine($"Pair: {tradingResult.Pair} Amount: {tradingResult.Quantity} BtcAmount: {tradingResult.BtcQuantity} Price:{tradingResult.Price}");
+            Console.WriteLine($"Pair: {tradingResult.Pair} \t Amount: {tradingResult.Quantity} \t BtcAmount: {tradingResult.BtcQuantity} \t Price:{tradingResult.Price} \t CloseDateTime: {tradingResult.CloseTime.ToString()}");
         }
     }
 }

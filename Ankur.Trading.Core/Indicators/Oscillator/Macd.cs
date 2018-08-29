@@ -23,7 +23,7 @@ namespace Ankur.Trading.Core.Indicators
 
         private decimal Multiplier => 2 / (_signal + 1);
 
-        public decimal Value => Histogram.First();
+        public decimal Value => MacdLine.First() - SignalLine.First();
 
         public Macd (IEnumerable<Candlestick> candleSticks, int fast, int slow, int signal)
         {
@@ -63,6 +63,10 @@ namespace Ankur.Trading.Core.Indicators
 
         public void AddCandleStick(Candlestick candleStick)
         {
+            List<Candlestick> candlesticklist = new List<Candlestick>();
+            candlesticklist.Add(candleStick);
+            candlesticklist.AddRange(_candleSticks);
+            _candleSticks = candlesticklist;
             Fast.AddCandleStick(candleStick);
             Slow.AddCandleStick(candleStick);
             var diff = Fast.Value - Slow.Value;
