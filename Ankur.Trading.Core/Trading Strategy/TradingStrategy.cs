@@ -39,7 +39,7 @@ namespace Ankur.Trading.Core.Trading_Strategy
             CurrentPosition.Add(btcPosition);
             foreach (var ticker in _request.TradingPairs)
             {
-                var ccy = ticker.Substring(0, 3);
+                var ccy = ticker.Replace("btc", "");
                 var pos = CurrentPosition.Where(x => x.Ticker == ccy);
                 if (pos.Count() > 0) continue;
                 CurrentPosition.Add(new Position(ccy,0));
@@ -86,7 +86,7 @@ namespace Ankur.Trading.Core.Trading_Strategy
 
         public void BuyAction(AlgorthmResults results)
         {
-            var ticker = results.ticker.Substring(0, 3);
+            var ticker = results.ticker.Replace("btc","");
             var currentPosistion = CurrentPosition.Where(x => x.Ticker == ticker);
             if (currentPosistion.Count() == 0)
             {
@@ -105,7 +105,7 @@ namespace Ankur.Trading.Core.Trading_Strategy
 
         public void SellAction(AlgorthmResults results)
         {
-            var ticker = results.ticker.Substring(0, 3);
+            var ticker = results.ticker.Replace("btc", "");
             var position = CurrentPosition.First(x => x.Ticker == ticker);
             if (position.Open)
             {
