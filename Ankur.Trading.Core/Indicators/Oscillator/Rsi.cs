@@ -14,10 +14,12 @@ namespace Ankur.Trading.Core.Oscillator
     {
         
         private IEnumerable<decimal> _closePrices;
+        private List<decimal> _avgGain;
+        private List<decimal> _avgLoss;
         public IEnumerable<decimal> rsi;
         private readonly int _length;
 
-        public decimal Value => rsi.Last();
+        public decimal Value => rsi.First();
         public decimal Gradient { get; set; }
 
         public Rsi(IEnumerable<Candlestick> candleSticks, int length) : this(candleSticks.Select(x => x.Close), length)
@@ -33,64 +35,35 @@ namespace Ankur.Trading.Core.Oscillator
         private void CalculateRsi()
         {
             var rsiList = new List<decimal>();
-            var gainQueue = new Queue<decimal>(_length + 1);
-            var lossQueue = new Queue<decimal>(_length + 1);
-            decimal previousClose = 0m;
-            decimal previousAvgGain = 0m;
-            decimal previousAvgLoss = 0m;
-
-
             List<decimal> closePrices = _closePrices.ToList();
+            List<decimal> avgGain = new List<decimal>();
+            List<decimal> avgLoss = new List<decimal>();
             closePrices.Reverse();
-            //var differences = closePrices.Skip(1).Select((x, y) => x - closePrices[y - 1]);
-            //int j = 0;
-            //for (int i = _length - 1; i < closePrices.Count(); i++)
-            //{
-            //    var avgGain = differences.Skip(j).Take(_length).Where(x=> x>0).Sum();
-            //    var avgLoss = differences.Skip(j).Take(_length).Where(x=> x<0).Sum();
-            //    j++;
+            int j = 1;
 
-            //}
+            //calculate the first RSI
+            avgGain.Add(closePrices.Take(_length).Select((x, y) => closePrices[y+1] - x).Select(c => c>0?c:0).Average());
+            avgLoss.Add(closePrices.Take(_length).Select((x, y) => closePrices[y+1] - x).Select(c => c < 0 ? -c : 0).Average());
+            rsiList.Add(GetRsi(avgGain.First(), avgLoss.First()));
 
-
-
-
-
-
-                foreach (var candlestick in closePrices)
+            for (int i = _length + 1; i < closePrices.Count(); i++)
             {
-                if (previousClose == 0m)
-                {
-                    previousClose = candlestick;
-                    continue;
-                }
+                var diff = closePrices[i] - closePrices[i - 1];
 
-                decimal change = candlestick - previousClose;
-                previousClose = candlestick;
-                var gain = 0m;
-                var loss = 0m;
-
-                if (change > 0) gain = change;
-                else loss = change * -1;
-
-                gainQueue.Enqueue(gain);
-                lossQueue.Enqueue(loss);
-
-                if (gainQueue.Count > _length) gainQueue.Dequeue();
-                if (lossQueue.Count > _length) lossQueue.Dequeue();
-
-                if (gainQueue.Count != _length) continue;
-                if(previousAvgGain ==0) previousAvgGain = gainQueue.Average();
-                else previousAvgGain = (previousAvgGain * (_length-1) + gain)/_length;
-                if (previousAvgLoss == 0) previousAvgLoss = lossQueue.Average();
-                else previousAvgLoss = (previousAvgLoss * (_length - 1) + loss) / _length;
-
-
-                rsiList.Add(GetRsi(previousAvgGain, previousAvgLoss));
-
+                var t1 = (avgGain.Last() * (_length - 1) + (diff > 0 ? diff : 0)) / _length;
+                var t2 = (avgLoss.Last() * (_length - 1) + (diff < 0 ? -diff : 0)) / _length;
+                avgGain.Add(t1);
+                avgLoss.Add(t2);
+                j++;
+                rsiList.Add(GetRsi(avgGain.Last(),avgLoss.Last()));
             }
 
+            rsiList.Reverse();
+            avgGain.Reverse();
+            avgLoss.Reverse();
             rsi = rsiList;
+            _avgGain = avgGain;
+            _avgLoss = avgLoss;
         }
 
         private decimal GetRsi(decimal avgGain,  decimal avgLoss  )
@@ -105,10 +78,28 @@ namespace Ankur.Trading.Core.Oscillator
 
         public void AddCandleStick(Candlestick candleStick)
         {
+            var diff = _closePrices.First() - candleStick.Close;
+
             var list = new List<decimal>();
+            List<decimal> avgGain = new List<decimal>();
+            List<decimal> avgLoss = new List<decimal>();
+            List<decimal> rsiList = new List<decimal>();
+
             list.Add(candleStick.Close);
-            list.AddRange(_closePrices);
-            CalculateRsi();
+            list.AddRange(_closePrices.Take(100));
+            _closePrices = list;
+
+            avgGain.Add((_avgGain.First() * (_length - 1) + diff < 0 ? diff : 0) / _length);
+            avgGain.AddRange(_avgGain.Take(100));
+            avgLoss.Add((_avgGain.First() * (_length - 1) + diff > 0 ? diff : 0) / _length);
+            avgLoss.AddRange(_avgLoss.Take(100));
+            
+
+            rsiList.Add(GetRsi(avgGain.First(), avgLoss.First()));
+            rsiList.AddRange(rsi.Take(100));
+            rsi = rsiList;
+            _avgGain = avgGain;
+            _avgLoss = avgLoss;
         }
     }
 }

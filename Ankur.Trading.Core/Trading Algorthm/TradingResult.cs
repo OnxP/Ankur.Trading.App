@@ -30,12 +30,12 @@ namespace Ankur.Trading.Core.Trading_Algorthm
 
         public DateTime FirstTrade => buyTrade.Time;
         public DateTime LastTrade => sellTrade.Time;
-        public decimal Bought => Math.Round(buyTrade.Quantity,2);
-        public decimal BtcBought => Math.Round(buyTrade.BtcQuantity*-1,2);
-        public decimal Sold => Math.Round(sellTrade.Quantity*-1,2);
-        public decimal BtcSold => Math.Round(sellTrade.BtcQuantity,2);
-        public decimal Pnl => Math.Round(BtcSold - BtcBought,2);
-        public decimal PnlPercent => Math.Round(((BtcSold / BtcBought-1)) * 100,2);
+        public decimal Bought => Math.Round(buyTrade.Quantity,5);
+        public decimal BtcBought => Math.Round(buyTrade.BtcQuantity*-1,5);
+        public decimal Sold => Math.Round(sellTrade.Quantity*-1,5);
+        public decimal BtcSold => Math.Round(sellTrade.BtcQuantity,5);
+        public decimal Pnl => Math.Round(BtcSold - BtcBought,5);
+        public decimal PnlPercent => Math.Round(((BtcSold / BtcBought-1)) * 100,5);
         public string Ticker => buyTrade.Symbol;
 
         public override string ToString()

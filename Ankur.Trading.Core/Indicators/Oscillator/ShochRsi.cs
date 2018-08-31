@@ -8,9 +8,9 @@ using Ankur.Trading.Core.Oscillator;
 
 namespace Ankur.Trading.Core.Indicators.Oscillator
 {
-    public class ShochRsi : IIndicator
+    public class StochRsi : IIndicator
     {
-        public IEnumerable<decimal> shochRsi;
+        public IEnumerable<decimal> stochRsi;
         private IEnumerable<Candlestick> _candleSticks;
         private int _rsiLength;
         private int _shochRsiLength;
@@ -23,7 +23,7 @@ namespace Ankur.Trading.Core.Indicators.Oscillator
         private Sma K;
         private Sma D;
 
-        public ShochRsi(IEnumerable<Candlestick> candleSticks, int rsiLength, int shochRsiLength, int smoothK, int smoothD)
+        public StochRsi(IEnumerable<Candlestick> candleSticks, int rsiLength, int shochRsiLength, int smoothK, int smoothD)
         {
             this._candleSticks = candleSticks;
             this._rsiLength = rsiLength;
@@ -39,8 +39,16 @@ namespace Ankur.Trading.Core.Indicators.Oscillator
 
         private void CalculateKandD()
         {
-            K = new Sma(shochRsi.Select(x => x * 100), _smoothK);
-            D = new Sma(K.sma.Reverse(), _smoothD);
+            if (K == null)
+            {
+                K = new Sma(stochRsi.Select(x => x * 100), _smoothK);
+                D = new Sma(K.sma, _smoothD);
+            }
+            else
+            {
+                K.AddCandleStick(new Candlestick { Close = stochRsi.First() * 100 });
+                D.AddCandleStick(new Candlestick { Close = K.Value });
+            }
         }
 
         private void CalculateShochRsi(IEnumerable<Candlestick> candleSticks)
@@ -58,8 +66,8 @@ namespace Ankur.Trading.Core.Indicators.Oscillator
                 var shochrsi = (rsiLenList.Last() - minRsi) / (maxRsi - minRsi);
                 list.Add(shochrsi);
             }
-            shochRsi = list;
-            shochRsi.Reverse();
+            stochRsi = list;
+            stochRsi.Reverse();
             CalculateKandD();
         }
 
@@ -67,9 +75,18 @@ namespace Ankur.Trading.Core.Indicators.Oscillator
         {
             var list = new List<Candlestick>();
             list.Add(futureCandleStick);
-            list.AddRange(_candleSticks);
+            list.AddRange(_candleSticks.Take(100));
             _candleSticks = list;
-            CalculateShochRsi(list);
+            rsi.AddCandleStick(futureCandleStick);
+            var sRsiList = new List<decimal>();
+            var maxRsi = rsi.rsi.Take(_rsiLength).Max();
+            var minRsi = rsi.rsi.Take(_rsiLength).Min();
+            var shochrsi = (rsi.Value- minRsi) / (maxRsi - minRsi);
+
+            sRsiList.Add(shochrsi);
+            sRsiList.AddRange(stochRsi.Take(100));
+            stochRsi = sRsiList;
+            CalculateKandD();
         }
     }
 }

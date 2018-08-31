@@ -56,12 +56,12 @@ namespace Ankur.Trading.Core.Broker
 
         private decimal CalculateBtcQuantity(decimal currentPrice, decimal quantity)
         {
-            return Math.Round(quantity * currentPrice, 2);
+            return Math.Round(quantity * currentPrice, 6);
         }
 
         private decimal CalculateQuantity(decimal currentPrice, decimal quantity)
         {
-            return Math.Round(quantity / currentPrice,2);
+            return Math.Round(quantity / currentPrice,6);
         }
     }
 }

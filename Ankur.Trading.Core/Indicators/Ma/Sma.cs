@@ -46,7 +46,7 @@ namespace Ankur.Trading.Core.Indicators
         {
             var list = new List<decimal>();
             list.Add(futureCandleStick.Close);
-            list.AddRange(_closePrices);
+            list.AddRange(_closePrices.Take(100));
             _closePrices = list;
             //_candleSticks = list.OrderByDescending(x=>x.CloseDateTime);
             CalculateCurrentSma();
@@ -57,7 +57,7 @@ namespace Ankur.Trading.Core.Indicators
             var sum = _closePrices.Take(Length).Sum();
             var list = new List<decimal>();
             list.Add(sum/Length);
-            list.AddRange(sma);
+            list.AddRange(sma.Take(100));
             sma = list;
         }
     }

@@ -48,7 +48,7 @@ namespace Ankur.Trading.Core.Indicators
         {
             var list = new List<decimal>();
             list.Add(futureCandleStick.Close);
-            list.AddRange(_closePrices);
+            list.AddRange(_closePrices.Take(100));
             _closePrices = list;
             CalculateCurrentEma(futureCandleStick);
         }
@@ -57,7 +57,7 @@ namespace Ankur.Trading.Core.Indicators
         {
             var list = new List<decimal>();
             list.Add((futureCandleStick.Close - Value) * Multiplier + Value);
-            list.AddRange(ema);
+            list.AddRange(ema.Take(100));
             ema = list;
         }
     }

@@ -50,6 +50,7 @@ namespace Ankur.Trading.Test.Indicators
                 new Candlestick{Close = 42.6628m},
                 new Candlestick{Close = 43.1314m}
             };
+            list.Reverse();
             return list;
         }
 
@@ -77,6 +78,7 @@ namespace Ankur.Trading.Test.Indicators
                 33.08m,
                 37.77m
             };
+            list.Reverse();
             return list;
         }
 

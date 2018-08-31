@@ -22,7 +22,7 @@ namespace Ankur.Trading.Core
         public Dictionary<int,Sma> Sma = new Dictionary<int, Sma>();
         public Dictionary<int,Ema> Ema = new Dictionary<int, Ema>();
 
-        public ShochRsi stochRsi;
+        public StochRsi stochRsi;
         public Rsi rsi;
         public Macd macd;
 
@@ -47,7 +47,7 @@ namespace Ankur.Trading.Core
             Ema.Add(20,new Ema(_candleSticks,20));
             Ema.Add(40,new Ema(_candleSticks,40));
 
-            stochRsi = new ShochRsi(_candleSticks,14,14,8,8);
+            stochRsi = new StochRsi(_candleSticks,14,14,8,8);
             rsi = new Rsi(_candleSticks,14);
             macd = new Macd(_candleSticks,12,26,9);
         }

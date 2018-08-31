@@ -65,20 +65,20 @@ namespace Ankur.Trading.Core.Indicators
         {
             List<Candlestick> candlesticklist = new List<Candlestick>();
             candlesticklist.Add(candleStick);
-            candlesticklist.AddRange(_candleSticks);
+            candlesticklist.AddRange(_candleSticks.Take(100));
             _candleSticks = candlesticklist;
             Fast.AddCandleStick(candleStick);
             Slow.AddCandleStick(candleStick);
             var diff = Fast.Value - Slow.Value;
             List<decimal> list = new List<decimal>();
             list.Add(diff);
-            list.AddRange(MacdLine);
+            list.AddRange(MacdLine.Take(100));
             MacdLine = list;
             MacdLineEma.AddCandleStick(new Candlestick() { Close = diff });
 
             list = new List<decimal>();
             list.Add(diff - MacdLineEma.Value);
-            list.AddRange(Histogram);
+            list.AddRange(Histogram.Take(100));
             Histogram = list;
         }
     }
