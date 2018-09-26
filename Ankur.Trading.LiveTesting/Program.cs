@@ -7,7 +7,7 @@ using Ankur.Trading.Core.BackTest;
 using Ankur.Trading.Core.Trading_Algorthm;
 using Binance.API.Csharp.Client.Models.Enums;
 
-namespace Ankur.Trading.BackTesting
+namespace Ankur.Trading.LiveTesting
 {
     class Program
     {
@@ -16,7 +16,7 @@ namespace Ankur.Trading.BackTesting
             //PARAMS
             BackTestRequest request = new BackTestRequest
             {
-                TradingPairs = new List<string> { "eosbtc" , "ontbtc", "nanobtc", "bccbtc", "trxbtc" },
+                TradingPairs = new List<string> { "eosbtc", "ontbtc", "nanobtc", "bccbtc", "trxbtc" },
                 From = new DateTime(2018, 08, 25),
                 To = new DateTime(2018, 08, 30),
                 Interval = TimeInterval.Minutes_15,
@@ -41,7 +41,7 @@ namespace Ankur.Trading.BackTesting
             DisplayTrades(request.TradingResults);
 
             Console.WriteLine($"BTC Finishing Amount: {request.FinalAmount}btc");
-            Console.WriteLine($"Total PNL - {request.TradingResults.Sum(x=>x.Pnl)}");
+            Console.WriteLine($"Total PNL - {request.TradingResults.Sum(x => x.Pnl)}");
             Console.WriteLine($"Total % profit - {CalculatePercent(request)}");
 
             Console.ReadKey();

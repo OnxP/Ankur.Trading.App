@@ -19,6 +19,7 @@ namespace Ankur.Trading.Core.Request
         IEnumerable<TradingResult> TradingResults { get; set; }
         bool TestTrade { get; }
         DateTime From { get; set; }
+        DateTime To { get; set; }
 
         void Add(TradingResult result);
     }
