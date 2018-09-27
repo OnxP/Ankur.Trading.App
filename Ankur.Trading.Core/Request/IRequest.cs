@@ -16,11 +16,14 @@ namespace Ankur.Trading.Core.Request
         decimal StartAmount { get; set; }
         //not for simplicity the back test will make market limit orders the entry price.
         OrderType OrderType { get; set; }
-        IEnumerable<TradingResult> TradingResults { get; set; }
+        IEnumerable<ITradingResult> TradingResults { get; set; }
         bool TestTrade { get; }
         DateTime From { get; set; }
         DateTime To { get; set; }
+        bool IsTest { get; set; }
+        decimal FinalAmount { get; set; }
+        decimal TradingAmount { get; set; }
 
-        void Add(TradingResult result);
+        void Add(ITradingResult result);
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ankur.Trading.Core.BackTest;
+using Ankur.Trading.Core.Log;
 using Ankur.Trading.Core.Trading_Algorthm;
 using Binance.API.Csharp.Client.Models.Enums;
 
@@ -16,10 +17,10 @@ namespace Ankur.Trading.BackTesting
             //PARAMS
             BackTestRequest request = new BackTestRequest
             {
-                TradingPairs = new List<string> { "eosbtc" , "ontbtc", "nanobtc", "bccbtc", "trxbtc" },
-                From = new DateTime(2018, 08, 25),
-                To = new DateTime(2018, 08, 30),
-                Interval = TimeInterval.Minutes_15,
+                TradingPairs = new List<string> { "xrpbtc" },//, "nanobtc", "bccbtc", "trxbtc" },
+                From = new DateTime(2018, 09, 15),
+                To = new DateTime(2018, 09, 26),
+                Interval = TimeInterval.Minutes_5,
                 Algorthm = TradingAlgorthm.Macd,
                 StartAmount = 1m,
                 TradingAmount = 0.5m,
@@ -47,7 +48,7 @@ namespace Ankur.Trading.BackTesting
             Console.ReadKey();
         }
 
-        private static void DisplayTrades(IEnumerable<TradingResult> tradingResults)
+        private static void DisplayTrades(IEnumerable<ITradingResult> tradingResults)
         {
             foreach (var result in tradingResults)
             {
@@ -65,7 +66,7 @@ namespace Ankur.Trading.BackTesting
 
         }
 
-        public static void LogTrade(TradingLog tradingResult)
+        public static void LogTrade(ITradingLog tradingResult)
         {
             Console.WriteLine($"Pair: {tradingResult.Pair} \t Amount: {tradingResult.Quantity} \t BtcAmount: {tradingResult.BtcQuantity} \t Price:{tradingResult.Price} \t CloseDateTime: {tradingResult.CloseTime.ToString()}");
         }

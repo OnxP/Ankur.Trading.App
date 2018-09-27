@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MarketData", "MarketData", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ankur.Trading.MarketData", "Ankur.Trading.MarketData\Ankur.Trading.MarketData.csproj", "{AEA14A53-E28C-4634-AC4C-0C169EEE2DBA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ankur.Trading.LiveTesting", "Ankur.Trading.LiveTesting\Ankur.Trading.LiveTesting.csproj", "{E21D0138-5345-48DE-B817-C07C3C06DCB7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,10 @@ Global
 		{AEA14A53-E28C-4634-AC4C-0C169EEE2DBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEA14A53-E28C-4634-AC4C-0C169EEE2DBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AEA14A53-E28C-4634-AC4C-0C169EEE2DBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E21D0138-5345-48DE-B817-C07C3C06DCB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E21D0138-5345-48DE-B817-C07C3C06DCB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E21D0138-5345-48DE-B817-C07C3C06DCB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E21D0138-5345-48DE-B817-C07C3C06DCB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +103,7 @@ Global
 		{DA8E8C0E-5D7E-4D5E-99FA-610543EA8429} = {89442789-2BB9-44DF-9C54-6FC2A66346AE}
 		{1A277375-CB02-4FEC-9955-B3BC7D2C286F} = {89442789-2BB9-44DF-9C54-6FC2A66346AE}
 		{AEA14A53-E28C-4634-AC4C-0C169EEE2DBA} = {F0E781C2-FF8E-43DF-851D-2EAEB030A61D}
+		{E21D0138-5345-48DE-B817-C07C3C06DCB7} = {BB5024D7-CA28-444D-B4D9-8E2C03ABE95D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CFDB7E91-E732-48B0-885D-EAE3998CEEC7}

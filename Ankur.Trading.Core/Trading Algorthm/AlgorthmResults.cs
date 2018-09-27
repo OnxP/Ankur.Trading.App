@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 namespace Ankur.Trading.Core.Trading_Algorthm
 {
     //this should class should contain the result of the algorthm and evidence to explain why the recommendation was made.
-    public class AlgorthmResults
+    public class AlgorthmResults : IAlgorthmResults
     {
-        public readonly string ticker;
+        public string Ticker => ticker;
+        private readonly string ticker;
 
         public AlgorthmResults(string ticker)
         {

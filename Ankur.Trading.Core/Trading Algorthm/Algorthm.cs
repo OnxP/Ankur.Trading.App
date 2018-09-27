@@ -18,7 +18,7 @@ namespace Ankur.Trading.Core.Trading_Algorthm
             this.list = list;
         }
 
-        public AlgorthmResults Evaulate(string ticker, TradingPairInfo tradingPairInfo)
+        public IAlgorthmResults Evaulate(string ticker, TradingPairInfo tradingPairInfo)
         {
             var result = new AlgorthmResults(ticker);
             result.LastPrice = tradingPairInfo.CurrentPrice;

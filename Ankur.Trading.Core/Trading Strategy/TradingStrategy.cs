@@ -5,6 +5,8 @@ using Binance.API.Csharp.Client;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using Ankur.Trading.Core.Log;
+using Ankur.Trading.Core.Request;
 
 namespace Ankur.Trading.Core.Trading_Strategy
 {
@@ -16,20 +18,18 @@ namespace Ankur.Trading.Core.Trading_Strategy
     //  invalidate the results of the algorthm.
     //at the moment this class will work with only a single trading pair.
     //base class for other trading stragies.
-    public class TradingStrategy
+    public class TradingStrategy : ITradingStrategy
     {
-        private BackTestRequest _request;
+        private IRequest _request;
         private List<Position> CurrentPosition { get; set; }
         private Broker.Broker broker { get; set; }
         private IList<Position> positionHistory { get; set; }
         private Position BtcPosition => CurrentPosition.First(c => c.Ticker == "btc");
         public decimal CurrentBtcAmount => BtcPosition.Quantity;
 
-        public delegate void LogHandler(TradingLog result);
+        public event LogHandler.LogHandlerDelegate Log;
 
-        public event LogHandler Log;
-
-        public TradingStrategy(BinanceClient binanceClient, BackTestRequest request)
+        public TradingStrategy(BinanceClient binanceClient, IRequest request)
         {
             broker = new Broker.Broker(binanceClient,request);
             _request = request;
@@ -47,24 +47,24 @@ namespace Ankur.Trading.Core.Trading_Strategy
             
         }
 
-        public void Process(IEnumerable<AlgorthmResults> analysisResults)
+        public void Process(IEnumerable<IAlgorthmResults> analysisResults)
         {
             //Loop though the open positions first to see if they need to be closed.
-            foreach (AlgorthmResults result in analysisResults.Where(x => x.Action == TradeAction.Sell))
+            foreach (IAlgorthmResults result in analysisResults.Where(x => x.Action == TradeAction.Sell))
             {
                 SellAction(result);
             }
             //Loop though the remaining Buy Positions. If more than one Buy position exists then additional information is required to decide which of the positions to buy. E.g direction of the longer ema.
-            foreach (AlgorthmResults result in analysisResults.Where(x => x.Action == TradeAction.Buy))
+            foreach (IAlgorthmResults result in analysisResults.Where(x => x.Action == TradeAction.Buy))
             {
                 BuyAction(result);
             }
         }
 
-        internal IEnumerable<TradingResult> TradingResults()
+        public IEnumerable<ITradingResult> TradingResults()
         {
             //assume buy and sell pairs are store next to each other in the list.
-            var list = new List<TradingResult>();
+            var list = new List<ITradingResult>();
             foreach (var position in CurrentPosition.Where(x=>x.Ticker!="btc"))
             {
                 var trades = position.Trades.ToList();
@@ -84,9 +84,9 @@ namespace Ankur.Trading.Core.Trading_Strategy
             return list;
         }
 
-        public void BuyAction(AlgorthmResults results)
+        public void BuyAction(IAlgorthmResults results)
         {
-            var ticker = results.ticker.Replace("btc","");
+            var ticker = results.Ticker.Replace("btc","");
             var currentPosistion = CurrentPosition.Where(x => x.Ticker == ticker);
             if (currentPosistion.Count() == 0)
             {
@@ -96,27 +96,27 @@ namespace Ankur.Trading.Core.Trading_Strategy
             //check BTC amount.
             if (BtcPosition.Open && BtcPosition.Quantity >= _request.TradingAmount)
             {
-                var transactionPair = broker.MakeTransaction(results.Action, results.ticker, _request.TradingAmount, results.LastPrice);
+                var transactionPair = broker.MakeTransaction(results.Action, results.Ticker, _request.TradingAmount, results.LastPrice);
                 CurrentPosition.First(x=>x.Ticker == ticker).Add(transactionPair.First());
                 BtcPosition.Add(transactionPair.Last());
                 Log?.Invoke(new TradingLog(transactionPair,results.CloseDateTime));
             }
         }
 
-        public void SellAction(AlgorthmResults results)
+        public void SellAction(IAlgorthmResults results)
         {
-            var ticker = results.ticker.Replace("btc", "");
+            var ticker = results.Ticker.Replace("btc", "");
             var position = CurrentPosition.First(x => x.Ticker == ticker);
             if (position.Open)
             {
-                var transactionPair = broker.MakeTransaction(results.Action, results.ticker, position.Quantity, results.LastPrice);
+                var transactionPair = broker.MakeTransaction(results.Action, results.Ticker, position.Quantity, results.LastPrice);
                 position.Add(transactionPair.First());
                 BtcPosition.Add(transactionPair.Last());
                 Log?.Invoke(new TradingLog(transactionPair, results.CloseDateTime));
             }
         }
 
-        internal void ClosePositions(IDictionary<string, decimal> lastPrices)
+        public void ClosePositions(IDictionary<string, decimal> lastPrices)
         {
             foreach (Position result in CurrentPosition.Where(x => x.Open && x.Ticker != "btc"))
             {
@@ -126,7 +126,7 @@ namespace Ankur.Trading.Core.Trading_Strategy
             }
         }
 
-        public void WaitAction(AlgorthmResults results)
+        public void WaitAction(IAlgorthmResults results)
         {
 
         }

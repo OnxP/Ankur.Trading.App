@@ -48,5 +48,15 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ankur.Trading.Core\Ankur.Trading.Core.csproj">
+      <Project>{57492D84-9761-440F-A5A6-ED9B7E51FC2E}</Project>
+      <Name>Ankur.Trading.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Binance\Binance.API.Csharp.Client.Models\Binance.API.Csharp.Client.Models.csproj">
+      <Project>{7CF40EB8-D81D-40B5-B849-17E5662175D6}</Project>
+      <Name>Binance.API.Csharp.Client.Models</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

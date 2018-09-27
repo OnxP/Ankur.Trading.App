@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Ankur.Trading.Core.Trading_Algorthm
 {
-    public class TradingResult
+    public class TradingResult : ITradingResult
     {
         private Trade buyTrade;
         private Trade sellTrade;

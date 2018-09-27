@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ankur.Trading.Core.BackTest;
+using Ankur.Trading.Core.LiveTest;
+using Ankur.Trading.Core.Log;
+using Ankur.Trading.Core.Request;
 using Ankur.Trading.Core.Trading_Algorthm;
 using Binance.API.Csharp.Client.Models.Enums;
 
@@ -14,7 +17,7 @@ namespace Ankur.Trading.LiveTesting
         static void Main(string[] args)
         {
             //PARAMS
-            BackTestRequest request = new BackTestRequest
+            LiveTestRequest request = new LiveTestRequest
             {
                 TradingPairs = new List<string> { "eosbtc", "ontbtc", "nanobtc", "bccbtc", "trxbtc" },
                 From = new DateTime(2018, 08, 25),
@@ -30,7 +33,7 @@ namespace Ankur.Trading.LiveTesting
             //then loop though the remianing candles to simulate live trade streaming.
             //the system can then make decisions at which points to buy and sell (simple SMA strategy to start with).
             //once the processing has been completed the result are displayed, each trade with buy price and sell price and percentage profit.
-            var backTest = new BackTest(request);
+            var backTest = new LiveTest(request);
             backTest.Log += LogTrade;
             //TODO make this process ASYNC.
             Console.WriteLine($"Starting Amount: {request.StartAmount}btc");
@@ -47,7 +50,7 @@ namespace Ankur.Trading.LiveTesting
             Console.ReadKey();
         }
 
-        private static void DisplayTrades(IEnumerable<TradingResult> tradingResults)
+        private static void DisplayTrades(IEnumerable<ITradingResult> tradingResults)
         {
             foreach (var result in tradingResults)
             {
@@ -55,7 +58,7 @@ namespace Ankur.Trading.LiveTesting
             }
         }
 
-        public static decimal CalculatePercent(BackTestRequest request)
+        public static decimal CalculatePercent(IRequest request)
         {
             var sum = request.TradingResults.Sum(x => x.Pnl);
 
@@ -65,7 +68,7 @@ namespace Ankur.Trading.LiveTesting
 
         }
 
-        public static void LogTrade(TradingLog tradingResult)
+        public static void LogTrade(ITradingLog tradingResult)
         {
             Console.WriteLine($"Pair: {tradingResult.Pair} \t Amount: {tradingResult.Quantity} \t BtcAmount: {tradingResult.BtcQuantity} \t Price:{tradingResult.Price} \t CloseDateTime: {tradingResult.CloseTime.ToString()}");
         }

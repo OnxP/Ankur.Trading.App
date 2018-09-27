@@ -12,7 +12,7 @@ using Binance.API.Csharp.Client.Models.Market;
 
 namespace Ankur.Trading.Core
 {
-    public class TechnicalAnalysis
+    public class TechnicalAnalysis : ITechnicalAnalysis
     {
         private readonly BinanceClient _binanceClient;
         private IRequest _request;
@@ -104,7 +104,7 @@ namespace Ankur.Trading.Core
             }
         }
 
-        internal void AddCandleSticks(IDictionary<string, Candlestick> candlestick)
+        public void AddCandleSticks(IDictionary<string, Candlestick> candlestick)
         {
             foreach (var kvp in candlestick)
             {
@@ -138,9 +138,9 @@ namespace Ankur.Trading.Core
             Pairs[ticker].Add(futureCandleStick);
         }
 
-        public IEnumerable<AlgorthmResults> RunAlgorthm()
+        public IEnumerable<IAlgorthmResults> RunAlgorthm()
         {
-            var results = new List<AlgorthmResults>();
+            var results = new List<IAlgorthmResults>();
             foreach (var kvp in Pairs)
             {
                 results.Add(_algorthm.Evaulate(kvp.Key,kvp.Value));

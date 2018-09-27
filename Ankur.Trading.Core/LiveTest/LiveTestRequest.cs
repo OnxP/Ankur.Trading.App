@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Ankur.Trading.Core.Request;
 using Ankur.Trading.Core.Trading_Algorthm;
 using Binance.API.Csharp.Client.Models.Enums;
 
-namespace Ankur.Trading.Core.BackTest
+namespace Ankur.Trading.Core.LiveTest
 {
-    public class BackTestRequest : IRequest
+    public class LiveTestRequest : IRequest
     {
         public List<string> TradingPairs { get; set; }
         public DateTime From { get; set; }
