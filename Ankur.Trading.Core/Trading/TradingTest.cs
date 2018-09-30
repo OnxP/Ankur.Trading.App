@@ -50,6 +50,18 @@ namespace Ankur.Trading.Core.Trading
             }
         }
 
+        public IDictionary<string, Candlestick> GetNextCandleSticks()
+        {
+            while (CandleSticks.Count == 0 && !CandleSticksLoaded)
+            {
+                //Wait 1 second.
+                Thread.Sleep(1000);
+            }
+            var candlesticks = CandleSticks.Dequeue();
+            if (CandleSticks.Count == 0 && CandleSticksLoaded) IsLastCandleStick = true;
+            return candlesticks;
+        }
+
         public async void StartTrading()
         {
             StartTime = _request.From;
@@ -73,40 +85,8 @@ namespace Ankur.Trading.Core.Trading
             return new Task<bool>(LoadAllCandleSticks);
         }
 
-        private bool LoadAllCandleSticks()
-        {
-            var from = _request.From;
-            foreach (DateTime dt in SplitDates(_request.Interval, _request.From, _request.To))
-            {
-                LoadCandleSticksPerTicker(from, dt);
-                from = dt;
-            }
-            CandleSticksLoaded = true;
-            return IsLastCandleStick;
-        }
-
-        private void LoadCandleSticksPerTicker(DateTime from, DateTime dt)
-        {
-            var candlesticks = new Dictionary<string, List<Candlestick>>();
-            foreach (var ticker in _request.TradingPairs)
-            {
-                candlesticks.Add(ticker, _binanceClient.GetCandleSticks(ticker, _request.Interval, from, dt).Result.ToList());
-            }
-            int count = candlesticks.First().Value.Count();
-            
-            for (int i = 0; i < count ; i++)
-            {
-                var CandleSticksByTime = new Dictionary<string, Candlestick>();
-                foreach (var kvp in candlesticks)
-                {
-                    CandleSticksByTime.Add(kvp.Key, kvp.Value[i]);
-                }
-                CandleSticks.Enqueue(CandleSticksByTime);
-            }
-        }
-
-        public abstract IDictionary<string, Candlestick> GetNextCandleSticks();
-
+        public abstract bool LoadAllCandleSticks();
+        
         public bool ProcessCandleSticks(IDictionary<string, Candlestick> candlestick)
         {
             //Process 1 candlestick for each pair.

@@ -31,16 +31,36 @@ namespace Ankur.Trading.Core.BackTest
             }
         }
 
-        public override IDictionary<string, Candlestick> GetNextCandleSticks()
+        public override bool LoadAllCandleSticks()
         {
-            while (CandleSticks.Count == 0 && !CandleSticksLoaded)
+            var from = _request.From;
+            foreach (DateTime dt in SplitDates(_request.Interval, _request.From, _request.To))
             {
-                //Wait 1 second.
-                Thread.Sleep(1000);
+                LoadCandleSticksPerTicker(from, dt);
+                from = dt;
             }
-            var candlesticks = CandleSticks.Dequeue();
-            if (CandleSticks.Count == 0 && CandleSticksLoaded) IsLastCandleStick = true;
-            return candlesticks;
+            CandleSticksLoaded = true;
+            return IsLastCandleStick;
+        }
+
+        private void LoadCandleSticksPerTicker(DateTime from, DateTime dt)
+        {
+            var candlesticks = new Dictionary<string, List<Candlestick>>();
+            foreach (var ticker in _request.TradingPairs)
+            {
+                candlesticks.Add(ticker, _binanceClient.GetCandleSticks(ticker, _request.Interval, from, dt).Result.ToList());
+            }
+            int count = candlesticks.First().Value.Count();
+
+            for (int i = 0; i < count; i++)
+            {
+                var CandleSticksByTime = new Dictionary<string, Candlestick>();
+                foreach (var kvp in candlesticks)
+                {
+                    CandleSticksByTime.Add(kvp.Key, kvp.Value[i]);
+                }
+                CandleSticks.Enqueue(CandleSticksByTime);
+            }
         }
     }
 }
