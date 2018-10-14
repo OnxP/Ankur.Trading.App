@@ -17,9 +17,9 @@ namespace Ankur.Trading.BackTesting
             //PARAMS
             BackTestRequest request = new BackTestRequest
             {
-                TradingPairs = new List<string> { "xrpbtc" },//, "nanobtc", "bccbtc", "trxbtc" },
-                From = new DateTime(2018, 09, 15),
-                To = new DateTime(2018, 09, 26),
+                TradingPairs = new List<string> { "xrpbtc", "fuelbtc", "nanobtc", "bccbtc", "trxbtc" },
+                From = new DateTime(2018, 09, 20),
+                To = new DateTime(2018, 10, 03),
                 Interval = TimeInterval.Minutes_5,
                 Algorthm = TradingAlgorthm.Macd,
                 StartAmount = 1m,

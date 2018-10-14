@@ -20,8 +20,8 @@ namespace Ankur.Trading.Core.BackTest
     {
         public BackTest(IRequest request):base(request)
         {
-            technicalAnalysis = new TechnicalAnalysis(_binanceClient, _request);
-            tradingStrategy = new TradingStrategy(_binanceClient, _request);
+            technicalAnalysis = new TechnicalAnalysis(BinanceClient, _request);
+            tradingStrategy = new TradingStrategy(BinanceClient, _request);
             LastPrices = new Dictionary<string, decimal>();
             CandleSticks = new Queue<Dictionary<string, Candlestick>>();
             IsLastCandleStick = false;
@@ -48,7 +48,7 @@ namespace Ankur.Trading.Core.BackTest
             var candlesticks = new Dictionary<string, List<Candlestick>>();
             foreach (var ticker in _request.TradingPairs)
             {
-                candlesticks.Add(ticker, _binanceClient.GetCandleSticks(ticker, _request.Interval, from, dt).Result.ToList());
+                candlesticks.Add(ticker, BinanceClient.GetCandleSticks(ticker, _request.Interval, from, dt).Result.ToList());
             }
             int count = candlesticks.First().Value.Count();
 

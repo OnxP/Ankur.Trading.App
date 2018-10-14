@@ -49,12 +49,15 @@ namespace Ankur.Trading.Core.Trading_Algorthm
             decimal rsi = tradingPairInfo.rsi.Value;
             var srsi = tradingPairInfo.stochRsi;
             var Sma5 = tradingPairInfo.Ema[5].Value;
-            var Sma10 = tradingPairInfo.Ema[10].Value;
+            var Sma20 = tradingPairInfo.Ema[20].Value;
 
-            if (srsi.Value >=0 && mcad.Value >= 0)
+            if (mcad.Value > 0 && rsi < 50 && srsi.Value > 0 && Sma5 > Sma20)
                 return TradeAction.Buy;
 
-            if (mcad.Histogram.First() < mcad.Histogram.ElementAt(1) && srsi.Value>0 && rsi > 65)
+            if ((Sma5 - Sma20 )/ Sma20 >= 40m)
+                return TradeAction.Sell;
+
+            if (mcad.Value <= 0)
                 return TradeAction.Sell;
 
             return TradeAction.Wait;

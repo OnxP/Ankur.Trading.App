@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Binance.API.Csharp.Client.Models.Enums;
 using System.Threading;
@@ -58,6 +59,8 @@ namespace Binance.API.Csharp.Client.Test
             var singleTickerInfo = binanceClient.GetPriceChange24H("ETHBTC").Result;
 
             var allTickersInfo = binanceClient.GetPriceChange24H().Result;
+
+            var test = allTickersInfo.Select(x => x.Symbol);
         }
 
         [TestMethod]

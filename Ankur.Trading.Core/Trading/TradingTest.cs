@@ -26,6 +26,7 @@ namespace Ankur.Trading.Core.Trading
         //used to close positions at the end of backtesting.
         protected Dictionary<string,decimal> LastPrices { get; set; }
         protected Queue<Dictionary<string,Candlestick>> CandleSticks { get; set; }
+        protected Queue<Dictionary<string,Candlestick>> InitialCandleSticks { get; set; }
         protected bool IsLastCandleStick { get; set; }
         protected bool CandleSticksLoaded { get; set; }
 
@@ -35,7 +36,7 @@ namespace Ankur.Trading.Core.Trading
             remove => tradingStrategy.Log -= value;
         }
 
-        protected BinanceClient _binanceClient = new BinanceClient(new ApiClient(ConfigurationManager.AppSettings["ApiKey"],
+        protected BinanceClient BinanceClient = new BinanceClient(new ApiClient(ConfigurationManager.AppSettings["ApiKey"],
             ConfigurationManager.AppSettings["ApiSecret"]), false);
 
         protected TradingTest(IRequest request)

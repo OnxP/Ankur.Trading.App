@@ -63,7 +63,11 @@ namespace Ankur.Trading.Core.Indicators.Oscillator
                 var rsiLenList = rsiList.Skip(i++).Take(_shochRsiLength).ToList();
                 var maxRsi = rsiLenList.Max();
                 var minRsi = rsiLenList.Min();
-                var shochrsi = (rsiLenList.Last() - minRsi) / (maxRsi - minRsi);
+                decimal shochrsi;
+                if (maxRsi - minRsi != 0)
+                    shochrsi = (rsi.Value - minRsi) / (maxRsi - minRsi);
+                else
+                    shochrsi = 0;
                 list.Add(shochrsi);
             }
             stochRsi = list;
@@ -79,9 +83,14 @@ namespace Ankur.Trading.Core.Indicators.Oscillator
             _candleSticks = list;
             rsi.AddCandleStick(futureCandleStick);
             var sRsiList = new List<decimal>();
-            var maxRsi = rsi.rsi.Take(_rsiLength).Max();
-            var minRsi = rsi.rsi.Take(_rsiLength).Min();
-            var shochrsi = (rsi.Value- minRsi) / (maxRsi - minRsi);
+            var rsiLenList = rsi.rsi.Take(_shochRsiLength).ToList();
+            var maxRsi = rsiLenList.Max();
+            var minRsi = rsiLenList.Min();
+            decimal shochrsi;
+            if (maxRsi - minRsi != 0)
+                shochrsi = (rsi.Value - minRsi) / (maxRsi - minRsi);
+            else
+                shochrsi = 0;
 
             sRsiList.Add(shochrsi);
             sRsiList.AddRange(stochRsi.Take(100));
