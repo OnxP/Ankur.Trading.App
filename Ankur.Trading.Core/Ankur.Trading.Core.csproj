@@ -46,6 +46,7 @@
     <Compile Include="Broker\Broker.cs" />
     <Compile Include="Indicators\IIndicator.cs" />
     <Compile Include="Indicators\Ma\Ema.cs" />
+    <Compile Include="Indicators\Ma\Gsma.cs" />
     <Compile Include="Indicators\Oscillator\Macd.cs" />
     <Compile Include="Indicators\Oscillator\ShochRsi.cs" />
     <Compile Include="LinkedList\CandelStickInfo.cs" />
@@ -87,6 +88,10 @@
     <ProjectReference Include="..\Binance\Binance.API.Csharp.Client\Binance.API.Csharp.Client.csproj">
       <Project>{EC2A020E-338A-46EE-9D08-C158CBD49C92}</Project>
       <Name>Binance.API.Csharp.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kdb\Kdb.csproj">
+      <Project>{DA8E8C0E-5D7E-4D5E-99FA-610543EA8429}</Project>
+      <Name>Kdb</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

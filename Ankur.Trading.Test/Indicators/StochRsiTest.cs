@@ -85,8 +85,8 @@ namespace Ankur.Trading.Test.Indicators
         [TestMethod]
         public void ShochRsi_Test_14()
         {
-            var shochRsi = new StochRsi(BuildCandleSticks(),14, 14,3,3);
-            Assert.AreEqual(0.85m, Math.Round(shochRsi.KValue, 2));
+            var shochRsi = new StochRsi(BuildCandleSticks(),14, 14,3,3, "",BuildCandleSticks());
+            Assert.AreEqual(78.49m, Math.Round(shochRsi.KValue, 2));
             var results = shochRsi.stochRsi.Select(value => Math.Round(value, 2)).ToList();
             Compare(ShochRsiResults().ToList(), results);
         }

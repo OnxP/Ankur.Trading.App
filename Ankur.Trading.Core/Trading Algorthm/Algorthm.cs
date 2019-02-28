@@ -23,6 +23,7 @@ namespace Ankur.Trading.Core.Trading_Algorthm
             var result = new AlgorthmResults(ticker);
             result.LastPrice = tradingPairInfo.CurrentPrice;
             result.CloseDateTime = tradingPairInfo.CloseDateTime;
+            result.Candlestick = tradingPairInfo._candleSticks.First();
             switch (_request.Algorthm)
             {
                 case TradingAlgorthm.SimpleSMA:
@@ -50,11 +51,13 @@ namespace Ankur.Trading.Core.Trading_Algorthm
             var srsi = tradingPairInfo.stochRsi;
             var Sma5 = tradingPairInfo.Ema[5].Value;
             var Sma20 = tradingPairInfo.Ema[20].Value;
+            var Sma100 = tradingPairInfo.Ema[20].Value;
+            var Gsma20 = tradingPairInfo.Gsma[20].Value;
 
-            if (mcad.Value > 0 && rsi < 50 && srsi.Value > 0 && Sma5 > Sma20)
+            if (mcad.Value > 0 && srsi.Value > 0 && Sma5 > Sma20 && Gsma20>0)
                 return TradeAction.Buy;
 
-            if ((Sma5 - Sma20 )/ Sma20 >= 40m)
+            if (((Sma5 - Sma20 )/ Sma20) >= 40m)
                 return TradeAction.Sell;
 
             if (mcad.Value <= 0)

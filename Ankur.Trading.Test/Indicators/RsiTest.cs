@@ -91,7 +91,7 @@ namespace Ankur.Trading.Test.Indicators
         [TestMethod]
         public void Rsi_Test_14()
         {
-            var rsi = new Rsi(BuildCandleSticks(), 14);
+            var rsi = new Rsi(BuildCandleSticks(), 14, "");
             Assert.AreEqual(37.77m, Math.Round(rsi.Value, 2));
             var results = rsi.rsi.Select(value => Math.Round(value, 2)).ToList();
             Compare(RsiResults().ToList(), results);

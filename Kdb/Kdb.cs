@@ -44,27 +44,27 @@ namespace kx
 
         public kdb(string h, int p, string u, int maxBufferSize = DefaultMaxBufferSize, bool useTLS = false) { _maxBufferSize = maxBufferSize; Connect(h, p); s = this.GetStream(); if (useTLS) { s = new SslStream(s, false); ((SslStream)s).AuthenticateAsClient(h); } B = new byte[2 + u.Length]; J = 0; w(u + "\x3"); s.Write(B, 0, J); if (1 != s.Read(B, 0, 1)) throw new KException("access"); vt = Math.Min(B[0], (byte)3); }
 
-        static int ns(string s) { int i = s.IndexOf('\0'); i = -1 < i ? i : s.Length; return e.GetBytes(s.Substring(0, i)).Length; }
+        public static int ns(string s) { int i = s.IndexOf('\0'); i = -1 < i ? i : s.Length; return e.GetBytes(s.Substring(0, i)).Length; }
 
-        static TimeSpan t() { return DateTime.Now.TimeOfDay; }
-        static TimeSpan v; static void tm() { TimeSpan u = v; v = t(); O(v - u); }
+        public static TimeSpan t() { return DateTime.Now.TimeOfDay; }
+        public static TimeSpan v; public static void tm() { TimeSpan u = v; v = t(); O(v - u); }
 
-        static void O(object x) { Console.WriteLine(x); }
-        static string i2(int i) { return String.Format("{0:00}", i); }
+        public static void O(object x) { Console.WriteLine(x); }
+        public static string i2(int i) { return String.Format("{0:00}", i); }
 
-        static int ni = Int32.MinValue; static long nj = Int64.MinValue, o = (long)8.64e11 * 730119; static double nf = Double.NaN;
+        public static int ni = Int32.MinValue; static long nj = Int64.MinValue, o = (long)8.64e11 * 730119; static double nf = Double.NaN;
 
-        static object[] NU ={null,false,new Guid(),null,(byte)0,Int16.MinValue,ni,nj,(Single)nf,nf,' ',"",new DateTime(0),
+        public static object[] NU ={null,false,new Guid(),null,(byte)0,Int16.MinValue,ni,nj,(Single)nf,nf,' ',"",new DateTime(0),
 
  new Month(ni),new Date(ni),new DateTime(0),new KTimespan(nj),new Minute(ni),new Second(ni),new TimeSpan(nj)};
 
-        static object NULL(char c) { return NU[" bg xhijefcspmdznuvt".IndexOf(c)]; }
+        public static object NULL(char c) { return NU[" bg xhijefcspmdznuvt".IndexOf(c)]; }
 
         public static object NULL(Type t) { for (int i = 0; i < NU.Length; i++) if (NU[i] != null && t == NU[i].GetType()) return NU[i]; return null; }
 
         public static bool qn(object x) { int t = -kdb.t(x); return (t == 2 || t > 4) && x.Equals(NU[t]); }
 
-        private void u()
+        public void u()
         {
             int n = 0, r = 0, f = 0, s = 8, p = s; short i = 0; j = 0; byte[] dst = new byte[ri()]; int d = j; int[] aa = new int[256];
 
@@ -81,9 +81,9 @@ namespace kx
             b = dst; j = 8;
         }
 
-        static DateTime za = DateTime.MinValue.AddTicks(1), zw = DateTime.MaxValue;
+        public static DateTime za = DateTime.MinValue.AddTicks(1), zw = DateTime.MaxValue;
 
-        private static long clampDT(long j) { return Math.Min(Math.Max(j, za.Ticks), zw.Ticks); }
+        public static long clampDT(long j) { return Math.Min(Math.Max(j, za.Ticks), zw.Ticks); }
 
         [Serializable]
         public class Date : IComparable
@@ -167,7 +167,7 @@ namespace kx
 
         public class Dict { public object x; public object y; public Dict(object X, object Y) { x = X; y = Y; } }
 
-        static int find(string[] x, string y) { int i = 0; for (; i < x.Length && !x[i].Equals(y);) ++i; return i; }
+        public static int find(string[] x, string y) { int i = 0; for (; i < x.Length && !x[i].Equals(y);) ++i; return i; }
 
         public class Flip { public string[] x; public object[] y; public Flip(Dict X) { x = (string[])X.x; y = (object[])X.y; } public object at(string s) { return y[find(x, s)]; } }
 
@@ -180,7 +180,7 @@ namespace kx
             object[] y = new object[m + n]; Array.Copy(a.y, 0, y, 0, m); Array.Copy(b.y, 0, y, m, n); return new Flip(new Dict(x, y));
         }
 
-        static int t(object x)
+        public static int t(object x)
         {
             return x is bool ? -1 : x is Guid ? -2 : x is byte ? -4 : x is short ? -5 : x is int ? -6 : x is long ? -7 : x is float ? -8 : x is double ? -9 : x is char ? -10 :
 
@@ -191,11 +191,11 @@ x is bool[] ? 1 : x is Guid[] ? 2 : x is byte[] ? 4 : x is short[] ? 5 : x is in
 x is DateTime[] ? 12 : x is DateTime[] ? 15 : x is KTimespan[] ? 16 : x is TimeSpan[] ? 19 : x is Flip ? 98 : x is Dict ? 99 : 0;
         }
 
-        static int[] nt = { 0, 1, 16, 0, 1, 2, 4, 8, 4, 8, 1, 0, 8, 4, 4, 8, 8, 4, 4, 4 };// x.GetType().IsArray
+        public static int[] nt = { 0, 1, 16, 0, 1, 2, 4, 8, 4, 8, 1, 0, 8, 4, 4, 8, 8, 4, 4, 4 };// x.GetType().IsArray
 
         public static int n(object x) { return x is Dict ? n(((Dict)x).x) : x is Flip ? n(((Flip)x).y[0]) : x is char[] ? e.GetBytes((char[])x).Length : ((Array)x).Length; }
 
-        static int nx(object x)
+        public static int nx(object x)
         {
             int i = 0, n, t = kdb.t(x), j; if (t == 99) return 1 + nx(((Dict)x).x) + nx(((Dict)x).y); if (t == 98) return 3 + nx(((Flip)x).x) + nx(((Flip)x).y);
 
@@ -243,7 +243,14 @@ x is DateTime[] ? 12 : x is DateTime[] ? 15 : x is KTimespan[] ? 16 : x is TimeS
 
         void w(string s) { byte[] b = e.GetBytes(s); foreach (byte i in b) w(i); B[J++] = 0; }
 
-        string rs() { int k = j; for (; b[j] != 0; ++j) ; string s = e.GetString(b, k, j - k); j++; return s; }
+        string rs()
+        {
+            int k = j;
+            for (; b[j] != 0; ++j) ;
+            string s = e.GetString(b, k, j - k);
+            j++;
+            return s;
+        }
 
         void w(Date d) { w(d.i); }
         Date rd() { return new Date(ri()); }
@@ -401,7 +408,23 @@ x is DateTime[] ? 12 : x is DateTime[] ? 15 : x is KTimespan[] ? 16 : x is TimeS
 
         void read(byte[] b) { int i = 0, j, n = b.Length; for (; i < n; i += j) if (0 == (j = s.Read(b, i, Math.Min(_maxBufferSize, n - i)))) throw new Exception("read"); }
 
-        public object k() { read(b = new byte[8]); a = b[0] == 1; bool c = b[2] == 1; j = 4; read(b = new byte[ri() - 8]); if (c) u(); else j = 0; if (b[0] == 128) { j = 1; throw new KException(rs()); } return r(); }
+        public object k()
+        {
+            read(b = new byte[8]);
+            a = b[0] == 1;
+            bool c = b[2] == 1;
+            j = 4;
+            read(b = new byte[ri() - 8]);
+            if (c) u();
+            else j = 0;
+            if (b[0] == 128)
+            {
+                j = 1;
+                throw new KException(rs());
+            }
+
+            return r();
+        }
 
         public object k(object x) { w(1, x); return k(); }
 

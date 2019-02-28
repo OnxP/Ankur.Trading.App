@@ -35,31 +35,32 @@ namespace Ankur.Trading.Test.Indicators
             return list;
         }
 
+        private string pair = "";
         [TestMethod]
         public void Sma_Test_5()
         {
-            Sma sma = new Sma(BuildCandleSticks(),5);
+            Sma sma = new Sma(BuildCandleSticks(),5, pair);
             Assert.AreEqual(19,sma.Value);
         }
 
         [TestMethod]
         public void Sma_Test_3()
         {
-            Sma sma = new Sma(BuildCandleSticks(), 3);
+            Sma sma = new Sma(BuildCandleSticks(), 3, pair);
             Assert.AreEqual(20, sma.Value);
         }
 
         [TestMethod]
         public void Sma_Test_7()
         {
-            Sma sma = new Sma(BuildCandleSticks(), 7);
+            Sma sma = new Sma(BuildCandleSticks(), 7, pair);
             Assert.AreEqual(18, sma.Value);
         }
 
         [TestMethod]
         public void Sma_Test_9()
         {
-            Sma sma = new Sma(BuildCandleSticks(), 9);
+            Sma sma = new Sma(BuildCandleSticks(), 9, pair);
             Assert.AreEqual(17, sma.Value);
         }
 

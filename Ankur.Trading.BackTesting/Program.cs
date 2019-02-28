@@ -17,10 +17,11 @@ namespace Ankur.Trading.BackTesting
             //PARAMS
             BackTestRequest request = new BackTestRequest
             {
+                // 
                 TradingPairs = new List<string> { "xrpbtc", "fuelbtc", "nanobtc", "bccbtc", "trxbtc" },
-                From = new DateTime(2018, 09, 20),
-                To = new DateTime(2018, 10, 03),
-                Interval = TimeInterval.Minutes_5,
+                From = new DateTime(2018, 12, 21),
+                To = new DateTime(2019, 01, 20),
+                Interval = TimeInterval.Hours_1,
                 Algorthm = TradingAlgorthm.Macd,
                 StartAmount = 1m,
                 TradingAmount = 0.5m,

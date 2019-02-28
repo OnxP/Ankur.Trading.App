@@ -22,7 +22,7 @@ namespace Ankur.Trading.Core.Oscillator
         public decimal Value => rsi.First();
         public decimal Gradient { get; set; }
 
-        public Rsi(IEnumerable<Candlestick> candleSticks, int length) : this(candleSticks.Select(x => x.Close), length)
+        public Rsi(IEnumerable<Candlestick> candleSticks, int length, string ticker) : this(candleSticks.Select(x => x.Close), length)
         { }
 
         public Rsi(IEnumerable<decimal> candleSticks, int length)

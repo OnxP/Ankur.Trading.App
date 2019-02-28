@@ -23,18 +23,33 @@ namespace Ankur.Trading.Core.Indicators.Oscillator
         private Sma K;
         private Sma D;
 
-        public StochRsi(IEnumerable<Candlestick> candleSticks, int rsiLength, int shochRsiLength, int smoothK, int smoothD)
+        public StochRsi(IEnumerable<Candlestick> candleSticks, int rsiLength, int shochRsiLength, int smoothK,
+            int smoothD, string ticker)
         {
             this._candleSticks = candleSticks;
             this._rsiLength = rsiLength;
             this._shochRsiLength = shochRsiLength;
             this._smoothK = smoothK;
             this._smoothD = smoothD;
-            
-            
-            CalculateShochRsi(candleSticks);
-            
-            
+
+            rsi = new Rsi(candleSticks, _rsiLength, "");
+            var candlesticks = _candleSticks.Skip(_rsiLength + _shochRsiLength - 1).ToList();
+            CalculateShochRsi(candlesticks);
+        }
+
+        public StochRsi(IEnumerable<Candlestick> candleSticks, int rsiLength, int shochRsiLength, int smoothK,
+            int smoothD, string ticker, IEnumerable<Candlestick> RSI)
+        {
+            this._candleSticks = candleSticks;
+            this._rsiLength = rsiLength;
+            this._shochRsiLength = shochRsiLength;
+            this._smoothK = smoothK;
+            this._smoothD = smoothD;
+
+            rsi = new Rsi(candleSticks, _rsiLength, "");
+            rsi.rsi = RSI.Select(x => x.Close);
+            var candlesticks = _candleSticks.Skip(_shochRsiLength - 1).ToList();
+            CalculateShochRsi(candlesticks);
         }
 
         private void CalculateKandD()
@@ -53,19 +68,19 @@ namespace Ankur.Trading.Core.Indicators.Oscillator
 
         private void CalculateShochRsi(IEnumerable<Candlestick> candleSticks)
         {
-            rsi = new Rsi(candleSticks, _rsiLength);
+            
             var rsiList = rsi.rsi.ToList();
             var list = new List<decimal>();        
-            var candlesticks = _candleSticks.Skip(_rsiLength + _shochRsiLength).ToList();
+            
             int i = 0;
-            foreach (var candlestick in candlesticks)
+            foreach (var candlestick in candleSticks)
             {
                 var rsiLenList = rsiList.Skip(i++).Take(_shochRsiLength).ToList();
                 var maxRsi = rsiLenList.Max();
                 var minRsi = rsiLenList.Min();
                 decimal shochrsi;
                 if (maxRsi - minRsi != 0)
-                    shochrsi = (rsi.Value - minRsi) / (maxRsi - minRsi);
+                    shochrsi = (rsiLenList.Last() - minRsi) / (maxRsi - minRsi);
                 else
                     shochrsi = 0;
                 list.Add(shochrsi);

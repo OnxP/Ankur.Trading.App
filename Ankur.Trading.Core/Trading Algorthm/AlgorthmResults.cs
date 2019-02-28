@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Binance.API.Csharp.Client.Models.Market;
 
 namespace Ankur.Trading.Core.Trading_Algorthm
 {
@@ -20,6 +21,7 @@ namespace Ankur.Trading.Core.Trading_Algorthm
         public TradeAction Action { get; set; }
         public decimal LastPrice { get; set; }
         public DateTime CloseDateTime { get; set; }
+        public Candlestick Candlestick { get; set; }
     }
 
     public enum TradeAction { Buy, Sell, Wait}

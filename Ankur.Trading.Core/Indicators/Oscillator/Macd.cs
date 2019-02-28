@@ -25,7 +25,7 @@ namespace Ankur.Trading.Core.Indicators
 
         public decimal Value => MacdLine.First() - SignalLine.First();
 
-        public Macd (IEnumerable<Candlestick> candleSticks, int fast, int slow, int signal)
+        public Macd(IEnumerable<Candlestick> candleSticks, int fast, int slow, int signal, string ticker)
         {
             this._candleSticks = candleSticks;
             this._fast = fast;
@@ -37,8 +37,8 @@ namespace Ankur.Trading.Core.Indicators
 
         private void CalculateMacd()
         {
-            Fast = new Ema(_candleSticks, _fast);
-            Slow = new Ema(_candleSticks, _slow);
+            Fast = new Ema(_candleSticks, _fast, "");
+            Slow = new Ema(_candleSticks, _slow, "");
 
             var fastEma = Fast.ema.ToList();
             var slowEma = Slow.ema.ToList();

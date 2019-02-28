@@ -18,7 +18,7 @@ namespace Ankur.Trading.Core.Indicators
         public decimal Value => ema.First();
         public decimal Gradient => ema.First() - ema.ElementAt(1);
 
-        public Ema(IEnumerable<Candlestick> candleSticks, int length) : this(candleSticks.Select(x => x.Close),length)
+        public Ema(IEnumerable<Candlestick> candleSticks, int length, string ticker) : this(candleSticks.Select(x => x.Close),length)
         {
         }
 
