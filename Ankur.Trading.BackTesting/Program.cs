@@ -18,7 +18,7 @@ namespace Ankur.Trading.BackTesting
             BackTestRequest request = new BackTestRequest
             {
                 // 
-                TradingPairs = new List<string> { "xrpbtc", "fuelbtc", "nanobtc", "bccbtc", "trxbtc" },
+                TradingPairs = new List<string> { "trxbtc" },
                 From = new DateTime(2018, 12, 21),
                 To = new DateTime(2019, 01, 20),
                 Interval = TimeInterval.Hours_1,
