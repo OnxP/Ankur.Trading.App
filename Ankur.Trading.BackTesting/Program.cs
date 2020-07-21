@@ -18,9 +18,9 @@ namespace Ankur.Trading.BackTesting
             BackTestRequest request = new BackTestRequest
             {
                 // 
-                TradingPairs = new List<string> { "trxbtc" },
-                From = new DateTime(2018, 12, 21),
-                To = new DateTime(2019, 01, 20),
+                TradingPairs = new List<string> { "trxbtc", "sysbtc", "eosbtc", "xrpbtc" },
+                From = new DateTime(2020, 01, 21),
+                To = new DateTime(2020, 07, 20),
                 Interval = TimeInterval.Hours_1,
                 Algorthm = TradingAlgorthm.Macd,
                 StartAmount = 1m,
@@ -45,6 +45,8 @@ namespace Ankur.Trading.BackTesting
             Console.WriteLine($"BTC Finishing Amount: {request.FinalAmount}btc");
             Console.WriteLine($"Total PNL - {request.TradingResults.Sum(x=>x.Pnl)}");
             Console.WriteLine($"Total % profit - {CalculatePercent(request)}");
+            Console.WriteLine($"Win/Loss - Total - {CalculateRatio(request)}");
+
 
             Console.ReadKey();
         }
@@ -55,6 +57,16 @@ namespace Ankur.Trading.BackTesting
             {
                 Console.WriteLine(result.ToString());
             }
+        }
+        public static string CalculateRatio(BackTestRequest request)
+        {
+            double total = request.TradingResults.Count();
+            double win = request.TradingResults.Count(x => x.Pnl > 0);
+            double loss = request.TradingResults.Count(x => x.Pnl < 0);
+
+            //var diff = sum - request.StartAmount;
+            return $"{win}/{loss} {Math.Round(win/total)*100,0}% - {total}";
+
         }
 
         public static decimal CalculatePercent(BackTestRequest request)

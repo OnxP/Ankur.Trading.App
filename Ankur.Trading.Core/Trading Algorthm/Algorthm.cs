@@ -44,7 +44,7 @@ namespace Ankur.Trading.Core.Trading_Algorthm
             return result;
         }
 
-        private TradeAction Macd(TradingPairInfo tradingPairInfo)
+        private TradeAction MacdAndRsi(TradingPairInfo tradingPairInfo)
         {
             var mcad = tradingPairInfo.macd;
             decimal rsi = tradingPairInfo.rsi.Value;
@@ -62,6 +62,22 @@ namespace Ankur.Trading.Core.Trading_Algorthm
 
             if (mcad.Value <= 0 && srsi.Value<0 && rsi>80)
                 return TradeAction.Sell;
+
+            return TradeAction.Wait;
+        }
+
+        private TradeAction Macd(TradingPairInfo tradingPairInfo)
+        {
+            var mcad = tradingPairInfo.macd;
+            var Sma100 = tradingPairInfo.Sma[100].Value;
+            var Sma100gradient = tradingPairInfo.Sma[100].averageGradient;
+            var currentPrice = tradingPairInfo.CurrentPrice;
+
+            if (mcad.Value > 0 && Sma100 > currentPrice && Sma100gradient > 0)
+                return TradeAction.Buy;
+
+            //if (mcad.Value < 0 && Sma100 < currentPrice)
+            //    return TradeAction.Sell;
 
             return TradeAction.Wait;
         }

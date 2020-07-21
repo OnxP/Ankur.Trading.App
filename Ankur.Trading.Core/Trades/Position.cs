@@ -19,6 +19,9 @@ namespace Ankur.Trading.Core.Trades
 
         internal IList<Trade> Trades = new List<Trade>();
         public string Ticker {get;set;}
+        public decimal StopPrice { get; set; }
+        public bool InProfit { get; set; }
+
         private decimal Amount;
 
         public Position(string ticker, decimal startAmount)

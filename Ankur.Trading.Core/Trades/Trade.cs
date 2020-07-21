@@ -35,7 +35,7 @@ namespace Ankur.Trading.Core.Trades
 
         public TradeAction Action => Quantity > 0 ? TradeAction.Buy : TradeAction.Sell;
         public DateTime Time { get; private set; }
-        public decimal Price => Math.Round(BtcQuantity / Quantity * -1,6);
+        public decimal Price => Math.Round(BtcQuantity / Quantity * -1,9);
         public decimal Quantity { get; private set; }
         public string Symbol { get; private set; }
         public Trade CounterTrade { get; set; }

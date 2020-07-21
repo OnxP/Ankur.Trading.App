@@ -17,6 +17,8 @@ namespace Ankur.Trading.Core.Indicators
         public decimal Value => sma.First();
         public decimal Gradient => sma.First() - sma.ElementAt(1);
 
+        public decimal averageGradient => sma.First() - sma.Take(10).Average();
+
         public Sma(IEnumerable<Candlestick> candleSticks, int length, string ticker): this(candleSticks.Select(x => x.Close),length)
         {
            
