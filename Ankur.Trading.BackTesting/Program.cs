@@ -18,11 +18,11 @@ namespace Ankur.Trading.BackTesting
             BackTestRequest request = new BackTestRequest
             {
                 // 
-                TradingPairs = new List<string> { "trxbtc" },
-                From = new DateTime(2018, 12, 21),
-                To = new DateTime(2019, 01, 20),
-                Interval = TimeInterval.Hours_1,
-                Algorthm = TradingAlgorthm.Macd,
+                TradingPairs = new List<string> { "ARNBTC" },
+                From = new DateTime(2019, 02, 05),
+                To = new DateTime(2019, 03, 21),
+                Interval = TimeInterval.Minutes_30,
+                Algorthm = TradingAlgorthm.SimpleSMA,
                 StartAmount = 1m,
                 TradingAmount = 0.5m,
                 OrderType = OrderType.LIMIT

@@ -8,5 +8,7 @@ namespace Ankur.Trading.Core.Trading_Algorthm
         SimpleSMA,
         LongShochRsi,
         Macd,
+        Triple,
+        Triple_Multiple
     }
 }

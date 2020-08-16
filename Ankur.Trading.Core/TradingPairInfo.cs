@@ -17,6 +17,7 @@ namespace Ankur.Trading.Core
         private string pair;
         private TimeInterval interval;
         public IEnumerable<Candlestick> _candleSticks;
+        public List<Candlestick> _PartialCandlesticks;
         public decimal CurrentPrice => _candleSticks.First().Close;
 
         public DateTime CloseDateTime => _candleSticks.First().CloseDateTime;
@@ -28,13 +29,54 @@ namespace Ankur.Trading.Core
         public StochRsi stochRsi;
         public Rsi rsi;
         public Macd macd;
+        public TradingPairInfo _5Min;
+        public TradingPairInfo _15Min;
 
         public TradingPairInfo(string pair, TimeInterval interval, IEnumerable<Candlestick> candleSticks)
         {
             this.pair = pair;
             this.interval = interval;
-            this._candleSticks = candleSticks;
+            this._candleSticks = GetBucketedCandleSticks(interval, candleSticks);
             BuildIndicators();
+            //create the 5min candlesticks
+            if (this.interval != TimeInterval.Minutes_5) return;
+            //_5Min = new TradingPairInfo(pair, TimeInterval.Minutes_15, candleSticks);
+            //_15Min = new TradingPairInfo(pair, TimeInterval.Minutes_30, candleSticks);
+        }
+
+        private IEnumerable<Candlestick> GetBucketedCandleSticks(TimeInterval i, IEnumerable<Candlestick> candleSticks)
+        {
+            int j = 0;
+            int interval = (int) i / 5;
+            foreach (var candlestick in candleSticks)
+            {
+                if (candlestick.OpenDateTime.Minute % (int) i != 0) j++;
+                else break;
+            }
+
+            _PartialCandlesticks = candleSticks.Take(j).ToList();
+
+            var remaining = candleSticks.Skip(j);
+            var bucketedCandleStick = new List<Candlestick>();
+            for (int k = 0; k < remaining.Count(); k+= interval)
+            {
+                var bucket = remaining.Skip(k).Take(interval);
+                bucketedCandleStick.Add(BuildCandle(bucket));
+            }
+
+            return bucketedCandleStick;
+        }
+
+        private Candlestick BuildCandle(IEnumerable<Candlestick> bucket)
+        {
+            var stick = new Candlestick();
+            stick.Open = bucket.First().Open;
+            stick.Close = bucket.Last().Close;
+            stick.High = bucket.Max(x => x.High);
+            stick.Low = bucket.Min(x => x.Low);
+            stick.OpenTime = bucket.First().OpenTime;
+            stick.CloseTime = bucket.Last().CloseTime;
+            return stick;
         }
 
         private void BuildIndicators()
@@ -52,14 +94,29 @@ namespace Ankur.Trading.Core
 
             Gsma.Add(20,new Gsma(_candleSticks,20,10, pair));
 
-            stochRsi = new StochRsi(_candleSticks,14,14,8,8, pair);
+            stochRsi = new StochRsi(_candleSticks,14,14,3,3, pair);
             rsi = new Rsi(_candleSticks,14, pair);
             macd = new Macd(_candleSticks,12,26,9, pair);
         }
 
         public void Add(Candlestick futureCandleStick)
         {
-            kdb c = new kdb("localhost", 5000);
+            _5Min?.Add(futureCandleStick);
+            _15Min?.Add(futureCandleStick);
+            _PartialCandlesticks.Reverse();
+            _PartialCandlesticks.Add(futureCandleStick);
+
+            if (_PartialCandlesticks.Count % ((int) interval / 5) == 0)
+            {
+                futureCandleStick = BuildCandle(_PartialCandlesticks);
+                _PartialCandlesticks.Clear();
+            }
+            else
+            {
+                return;
+            }
+
+            //kdb c = new kdb("localhost", 5000);
             List<Candlestick> list = new List<Candlestick>();
             list.Add(futureCandleStick);
             list.AddRange(_candleSticks);
@@ -67,24 +124,24 @@ namespace Ankur.Trading.Core
             foreach (KeyValuePair<int, Sma> keyValuePair in Sma)
             {
                 keyValuePair.Value.AddCandleStick(futureCandleStick);
-                c.k($"insert[`MA](`{pair};\"Z\"$ \"{futureCandleStick.OpenDateTime:yyyy-MM-ddTHH:mm:ss:fffff}\"; `SMA; {keyValuePair.Key.ToString()}; \"f\"${keyValuePair.Value.Value})");
+                //c.k($"insert[`MA](`{pair};\"Z\"$ \"{futureCandleStick.OpenDateTime:yyyy-MM-ddTHH:mm:ss:fffff}\"; `SMA; {keyValuePair.Key.ToString()}; \"f\"${keyValuePair.Value.Value})");
             }
             foreach (KeyValuePair<int, Ema> keyValuePair in Ema)
             {
                 keyValuePair.Value.AddCandleStick(futureCandleStick);
-                c.k($"insert[`MA](`{pair};\"Z\"$ \"{futureCandleStick.OpenDateTime:yyyy-MM-ddTHH:mm:ss:fffff}\"; `EMA;{keyValuePair.Key.ToString()}; \"f\"${keyValuePair.Value.Value})");
+                //c.k($"insert[`MA](`{pair};\"Z\"$ \"{futureCandleStick.OpenDateTime:yyyy-MM-ddTHH:mm:ss:fffff}\"; `EMA;{keyValuePair.Key.ToString()}; \"f\"${keyValuePair.Value.Value})");
             }
             foreach (KeyValuePair<int, Gsma> keyValuePair in Gsma)
             {
                 keyValuePair.Value.AddCandleStick(futureCandleStick);
-                c.k($"insert[`MA](`{pair};\"Z\"$ \"{futureCandleStick.OpenDateTime:yyyy-MM-ddTHH:mm:ss:fffff}\"; `GSMA; {keyValuePair.Key.ToString()}; \"f\"${keyValuePair.Value.Value*10000000000})");
+                //c.k($"insert[`MA](`{pair};\"Z\"$ \"{futureCandleStick.OpenDateTime:yyyy-MM-ddTHH:mm:ss:fffff}\"; `GSMA; {keyValuePair.Key.ToString()}; \"f\"${keyValuePair.Value.Value*10000000000})");
             }
             stochRsi.AddCandleStick(futureCandleStick);
-            c.k($"insert[`Oscillator](`{pair};\"Z\"$ \"{futureCandleStick.OpenDateTime:yyyy-MM-ddTHH:mm:ss:fffff}\"; `SRSI; \"f\"${ stochRsi.KValue};\"f\"${stochRsi.DValue})");
+            //c.k($"insert[`Oscillator](`{pair};\"Z\"$ \"{futureCandleStick.OpenDateTime:yyyy-MM-ddTHH:mm:ss:fffff}\"; `SRSI; \"f\"${ stochRsi.KValue};\"f\"${stochRsi.DValue})");
             rsi.AddCandleStick(futureCandleStick);
-            c.k($"insert[`Oscillator](`{pair};\"Z\"$ \"{futureCandleStick.OpenDateTime:yyyy-MM-ddTHH:mm:ss:fffff}\"; `RSI; \"f\"${ rsi.Value};0.0)");
+            //c.k($"insert[`Oscillator](`{pair};\"Z\"$ \"{futureCandleStick.OpenDateTime:yyyy-MM-ddTHH:mm:ss:fffff}\"; `RSI; \"f\"${ rsi.Value};0.0)");
             macd.AddCandleStick(futureCandleStick);
-            c.k($"insert[`Oscillator](`{pair};\"Z\"$ \"{futureCandleStick.OpenDateTime:yyyy-MM-ddTHH:mm:ss:fffff}\"; `MACD; \"f\"${ macd.MacdLine.First()*100000000};\"f\"${macd.SignalLine.First()*100000000})");
+            //c.k($"insert[`Oscillator](`{pair};\"Z\"$ \"{futureCandleStick.OpenDateTime:yyyy-MM-ddTHH:mm:ss:fffff}\"; `MACD; \"f\"${ macd.MacdLine.First()*100000000};\"f\"${macd.SignalLine.First()*100000000})");
         }
     }
 }

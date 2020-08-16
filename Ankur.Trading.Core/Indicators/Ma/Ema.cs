@@ -15,8 +15,8 @@ namespace Ankur.Trading.Core.Indicators
         private readonly int Length;
         private decimal Multiplier => 2 / (decimal)(Length + 1);
 
-        public decimal Value => ema.First();
-        public decimal Gradient => ema.First() - ema.ElementAt(1);
+        public decimal Value => ema?.FirstOrDefault() ?? 0;
+        public decimal Gradient => ema?.First() ?? 0 - ema?.ElementAt(1) ?? 0;
 
         public Ema(IEnumerable<Candlestick> candleSticks, int length, string ticker) : this(candleSticks.Select(x => x.Close),length)
         {
@@ -26,6 +26,7 @@ namespace Ankur.Trading.Core.Indicators
         {
             _closePrices = candleSticks;
             this.Length = length;
+            if (_closePrices.Count() < length) return;
             CalculateEma();
         }
 
@@ -50,6 +51,12 @@ namespace Ankur.Trading.Core.Indicators
             list.Add(futureCandleStick.Close);
             list.AddRange(_closePrices.Take(100));
             _closePrices = list;
+            if (_closePrices.Count() < Length) return;
+            if (_closePrices.Count() == Length)
+            {
+                CalculateEma();
+                return;
+            }
             CalculateCurrentEma(futureCandleStick);
         }
 

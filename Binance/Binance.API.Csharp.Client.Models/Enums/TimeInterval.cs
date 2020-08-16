@@ -8,17 +8,17 @@ namespace Binance.API.Csharp.Client.Models.Enums
     public enum TimeInterval
     {
         [Description("1m")]
-        Minutes_1,
+        Minutes_1 = 1,
         [Description("3m")]
-        Minutes_3,
+        Minutes_3 = 3,
         [Description("5m")]
-        Minutes_5,
+        Minutes_5 = 5,
         [Description("15m")]
-        Minutes_15,
+        Minutes_15 = 15,
         [Description("30m")]
-        Minutes_30,
+        Minutes_30 = 30,
         [Description("1h")]
-        Hours_1,
+        Hours_1 = 60,
         [Description("2h")]
         Hours_2,
         [Description("4h")]

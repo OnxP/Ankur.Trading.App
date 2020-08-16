@@ -35,6 +35,12 @@ namespace Ankur.Trading.Core.Trading_Algorthm
                 case TradingAlgorthm.Macd:
                     result.Action = Macd(tradingPairInfo);
                     break;
+                case TradingAlgorthm.Triple:
+                    result.Action = Triple(tradingPairInfo);
+                    break;
+                case TradingAlgorthm.Triple_Multiple:
+                    result.Action = Triple_Multiple(tradingPairInfo);
+                    break;
                 default:
                     result.Action = TradeAction.Sell;
                     break;
@@ -42,6 +48,69 @@ namespace Ankur.Trading.Core.Trading_Algorthm
            
             //result.Action= sma5 > sma10 ? TradeAction.Buy : TradeAction.Sell;
             return result;
+        }
+
+        private TradeAction Triple_Multiple(TradingPairInfo tradingPairInfo)
+        {
+            try
+            {
+                var mcad = tradingPairInfo._15Min.macd;
+                decimal rsi = tradingPairInfo._15Min.rsi.Value;
+                var srsi = tradingPairInfo._15Min.stochRsi;
+
+                //Low rsi, Low SRSI and Low Macd
+                if (rsi < 50 && srsi.KValue < 30 && mcad.Value > 0)
+                {
+                    return Triple_Med(tradingPairInfo,TradeAction.Buy);
+                }
+
+                return Triple_Med(tradingPairInfo, TradeAction.Sell);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return TradeAction.Wait;
+            }
+            //check the long time series for buy positions
+            
+        }
+
+        private TradeAction Triple_Med(TradingPairInfo tradingPairInfo,TradeAction Long)
+        {
+            //check the long time series for buy positions
+            var mcad = tradingPairInfo._5Min.macd;
+            decimal rsi = tradingPairInfo._5Min.rsi.Value;
+            var srsi = tradingPairInfo._5Min.stochRsi;
+
+            //Low rsi, Low SRSI and Low Macd
+            if (rsi < 50 && srsi.KValue < 30 && mcad.Value > 0 && Long == TradeAction.Buy)
+            {
+                return Triple_Low(tradingPairInfo, TradeAction.Buy,TradeAction.Buy);
+            }
+
+            if (srsi.Value<0 && TradeAction.Sell == Long)
+            {
+                return Triple_Low(tradingPairInfo, TradeAction.Sell, TradeAction.Sell);
+            }
+
+            return TradeAction.Wait;
+        }
+
+        private TradeAction Triple_Low(TradingPairInfo tradingPairInfo, TradeAction Long, TradeAction Medium)
+        {
+            var mcad = tradingPairInfo.macd;
+            decimal rsi = tradingPairInfo.rsi.Value;
+            var srsi = tradingPairInfo.stochRsi;
+
+            //Low rsi, Low SRSI and Low Macd
+            if (rsi < 50 && srsi.Value > 0 && mcad.Value > 0 && Long == TradeAction.Buy && Medium == TradeAction.Buy)
+                return TradeAction.Buy;
+
+            if (rsi > 50 && srsi.Value < 0 && Medium == TradeAction.Sell)
+                return TradeAction.Sell;
+
+            return TradeAction.Wait;
+
         }
 
         private TradeAction Macd(TradingPairInfo tradingPairInfo)
@@ -53,14 +122,31 @@ namespace Ankur.Trading.Core.Trading_Algorthm
             var Sma20 = tradingPairInfo.Ema[20].Value;
             var Sma100 = tradingPairInfo.Ema[20].Value;
             var Gsma20 = tradingPairInfo.Gsma[20].Value;
+            var price = tradingPairInfo.CurrentPrice;
 
-            if (mcad.Value > 0 && rsi < 50 && srsi.Value > 0 && Sma5 > Sma20 && Gsma20>0)
+            if (mcad.Value > 0 && rsi < 50 && srsi.Value > 0 && srsi.DValue < 30 && Sma5 > Sma20 && price > Sma20)
                 return TradeAction.Buy;
 
-            if (((Sma5 - Sma20 )/ Sma20) >= 40m)
+            if (tradingPairInfo.CurrentPrice < Sma5)
                 return TradeAction.Sell;
 
-            if (mcad.Value <= 0 && srsi.Value<0 && rsi>80)
+            if (mcad.Value <= 0 && srsi.Value < 0)
+                return TradeAction.Sell;
+
+            return TradeAction.Wait;
+        }
+
+        private TradeAction Triple(TradingPairInfo tradingPairInfo)
+        {
+            var mcad = tradingPairInfo.macd;
+            decimal rsi = tradingPairInfo.rsi.Value;
+            var srsi = tradingPairInfo.stochRsi;
+
+            //Low rsi, Low SRSI and Low Macd
+            if (rsi < 50 && srsi.KValue > 30 && mcad.Value>0)
+                return TradeAction.Buy;
+
+            if (rsi > 50 && srsi.Value < 0 && srsi.KValue > 70)
                 return TradeAction.Sell;
 
             return TradeAction.Wait;
@@ -83,17 +169,21 @@ namespace Ankur.Trading.Core.Trading_Algorthm
         private TradeAction SimpleSMA(TradingPairInfo tradingPairInfo)
         {
             var sma5 = tradingPairInfo.Ema[5].Value;
+            var gsma = tradingPairInfo.Gsma[20].Value;
             var sma10 = tradingPairInfo.Ema[15].Value;
-            var sma40 = tradingPairInfo.Ema[40].Value;
+            var sma40 = tradingPairInfo.Ema[40].Gradient;
 
-            if (sma5 > sma10)
+            if (tradingPairInfo.CurrentPrice > sma5 && sma5 > sma10 && sma40 > 0)
             {
                 return TradeAction.Buy;
             }
-            else
+
+            if (tradingPairInfo.CurrentPrice < sma5 && sma5 < sma10)
             {
                 return TradeAction.Sell;
             }
+
+            return TradeAction.Wait;
         }
     }
 }

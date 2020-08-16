@@ -128,7 +128,7 @@ namespace Ankur.Trading.MarketData
         private IEnumerable<DateTime> SplitByWeek(DateTime from, DateTime to)
         {
             var daysdiff = (to - from).TotalDays;
-            for (int i = 0; i < daysdiff; i++)
+            for (int i = 0; i < daysdiff; i+=7)
             {
                 yield return from.AddDays(i);
             }

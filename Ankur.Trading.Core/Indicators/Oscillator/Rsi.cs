@@ -19,7 +19,7 @@ namespace Ankur.Trading.Core.Oscillator
         public IEnumerable<decimal> rsi;
         private readonly int _length;
 
-        public decimal Value => rsi.First();
+        public decimal Value => rsi?.First() ?? 0;
         public decimal Gradient { get; set; }
 
         public Rsi(IEnumerable<Candlestick> candleSticks, int length, string ticker) : this(candleSticks.Select(x => x.Close), length)
@@ -29,6 +29,7 @@ namespace Ankur.Trading.Core.Oscillator
         {
             _closePrices = candleSticks;
             this._length = length;
+            if (candleSticks.Count() < _length+1) return;
             CalculateRsi();
         }
 
@@ -86,6 +87,14 @@ namespace Ankur.Trading.Core.Oscillator
             list.Add(candleStick.Close);
             list.AddRange(_closePrices.Take(100));
             _closePrices = list;
+
+            if (_closePrices.Count() < _length+1) return;
+            if (_closePrices.Count() == _length+1)
+            {
+                CalculateRsi();
+                return;
+            }
+
 
             var t1 = (_avgGain.First() * (_length - 1) + (diff > 0 ? diff : 0)) / _length;
             var t2 = (_avgLoss.First() * (_length - 1) + (diff < 0 ? -diff : 0)) / _length;

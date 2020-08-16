@@ -14,7 +14,7 @@ namespace Ankur.Trading.Core.Indicators.Ma
         public IEnumerable<decimal> gsma;
         private readonly int averageLength;
 
-        public decimal Value => gsma.First();
+        public decimal Value => gsma?.FirstOrDefault() ?? 0;
 
         public Gsma(IEnumerable<Candlestick> candleSticks, int length, int averageLength, string ticker) : this(candleSticks.Select(x => x.Close),length, averageLength)
         {
@@ -24,6 +24,7 @@ namespace Ankur.Trading.Core.Indicators.Ma
         {
             _ema = new Ema(candleSticks, length);
             this.averageLength = averageLength;
+            if (candleSticks.Count() < averageLength + length) return;
             CalculateGsma();
         }
 
@@ -51,6 +52,14 @@ namespace Ankur.Trading.Core.Indicators.Ma
         public void AddCandleStick(Candlestick futureCandleStick)
         {
             _ema.AddCandleStick(futureCandleStick);
+            if (_ema.ema == null || _ema.ema.Count() < averageLength) return;
+            if (_ema.ema != null && _ema.ema.Count() == averageLength)
+            {
+                CalculateGsma();
+                return;
+            }
+
+
             CalculateCurrentSma();
         }
 

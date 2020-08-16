@@ -58,6 +58,7 @@
     <Compile Include="LiveTest\LiveTestRequest.cs" />
     <Compile Include="Log\ITradingLog.cs" />
     <Compile Include="Log\LogHandler.cs" />
+    <Compile Include="Market\Market.cs" />
     <Compile Include="Request\IRequest.cs" />
     <Compile Include="TechnicalAnalysis\TechnicalAnalysis.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

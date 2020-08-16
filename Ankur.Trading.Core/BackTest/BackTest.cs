@@ -46,7 +46,7 @@ namespace Ankur.Trading.Core.BackTest
 
         private void LoadCandleSticksPerTicker(DateTime from, DateTime dt)
         {
-            kdb c = new kdb("localhost", 5000);
+            //kdb c = new kdb("localhost", 5000);
             var candlesticks = new Dictionary<string, List<Candlestick>>();
             foreach (var ticker in _request.TradingPairs)
             {
@@ -64,7 +64,7 @@ namespace Ankur.Trading.Core.BackTest
 
                     //Prices - Opentime,open,high,low,close,volume,closetime
                     //time format "Z"$ "2007-08-09T07:08:09.101"
-                    c.k($"insert[`Prices](`{kvp.Key};\"Z\"$ \"{kvp.Value[i].OpenDateTime.ToString("yyyy-MM-ddTHH:mm:ss:fffff")}\"; {kvp.Value[i].Open}; {kvp.Value[i].High}; {kvp.Value[i].Low}; {kvp.Value[i].Close}; {kvp.Value[i].Volume}; \"Z\"$ \"{kvp.Value[i].CloseDateTime.ToString("yyyy-MM-ddTHH:mm:ss:fffff")}\")");
+                    //c.k($"insert[`Prices](`{kvp.Key};\"Z\"$ \"{kvp.Value[i].OpenDateTime.ToString("yyyy-MM-ddTHH:mm:ss:fffff")}\"; {kvp.Value[i].Open}; {kvp.Value[i].High}; {kvp.Value[i].Low}; {kvp.Value[i].Close}; {kvp.Value[i].Volume}; \"Z\"$ \"{kvp.Value[i].CloseDateTime.ToString("yyyy-MM-ddTHH:mm:ss:fffff")}\")");
                 }
                 CandleSticks.Enqueue(CandleSticksByTime);
             }

@@ -28,10 +28,11 @@ namespace Ankur.Trading.Core.Indicators
         public Macd(IEnumerable<Candlestick> candleSticks, int fast, int slow, int signal, string ticker)
         {
             this._candleSticks = candleSticks;
+            
             this._fast = fast;
             this._slow = slow;
             this._signal = signal;
-
+            if (_candleSticks.Count() < slow*2) return;
             CalculateMacd();
         }
 
@@ -67,6 +68,13 @@ namespace Ankur.Trading.Core.Indicators
             candlesticklist.Add(candleStick);
             candlesticklist.AddRange(_candleSticks.Take(100));
             _candleSticks = candlesticklist;
+            if (_candleSticks.Count() < _slow*2) return;
+            if(_candleSticks.Count() == _slow*2)
+            {
+                CalculateMacd();
+                return;
+            } 
+
             Fast.AddCandleStick(candleStick);
             Slow.AddCandleStick(candleStick);
             var diff = Fast.Value - Slow.Value;

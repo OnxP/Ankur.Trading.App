@@ -14,7 +14,7 @@ namespace Ankur.Trading.Core.Indicators
         public IEnumerable<decimal> sma;
         private int Length;
 
-        public decimal Value => sma.First();
+        public decimal Value => sma?.FirstOrDefault() ?? 0;
         public decimal Gradient => sma.First() - sma.ElementAt(1);
 
         public Sma(IEnumerable<Candlestick> candleSticks, int length, string ticker): this(candleSticks.Select(x => x.Close),length)
@@ -26,6 +26,7 @@ namespace Ankur.Trading.Core.Indicators
         {
             _closePrices = candleSticks;
             this.Length = length;
+            if(_closePrices.Count()<Length)return;
             CalculateSma();
         }
 
@@ -48,7 +49,12 @@ namespace Ankur.Trading.Core.Indicators
             list.Add(futureCandleStick.Close);
             list.AddRange(_closePrices.Take(100));
             _closePrices = list;
-            //_candleSticks = list.OrderByDescending(x=>x.CloseDateTime);
+            if (_closePrices.Count() < Length) return;
+            if (_closePrices.Count() == Length)
+            {
+                CalculateSma();
+                return;
+            }
             CalculateCurrentSma();
         }
 
