@@ -152,6 +152,22 @@ namespace Ankur.Trading.Core.Trading_Algorthm
             return TradeAction.Wait;
         }
 
+        private TradeAction Macd(TradingPairInfo tradingPairInfo)
+        {
+            var mcad = tradingPairInfo.macd;
+            var Sma100 = tradingPairInfo.Sma[100].Value;
+            var Sma100gradient = tradingPairInfo.Sma[100].averageGradient;
+            var currentPrice = tradingPairInfo.CurrentPrice;
+
+            if (mcad.Value > 0 && Sma100 > currentPrice && Sma100gradient > 0)
+                return TradeAction.Buy;
+
+            //if (mcad.Value < 0 && Sma100 < currentPrice)
+            //    return TradeAction.Sell;
+
+            return TradeAction.Wait;
+        }
+
         private TradeAction LongShochRsi(TradingPairInfo tradingPairInfo)
         {
             var k = tradingPairInfo.stochRsi.KValue;
@@ -171,16 +187,11 @@ namespace Ankur.Trading.Core.Trading_Algorthm
             var sma5 = tradingPairInfo.Ema[5].Value;
             var gsma = tradingPairInfo.Gsma[20].Value;
             var sma10 = tradingPairInfo.Ema[15].Value;
-            var sma40 = tradingPairInfo.Ema[40].Gradient;
+            var sma40 = tradingPairInfo.Ema[80].Value;
 
-            if (tradingPairInfo.CurrentPrice > sma5 && sma5 > sma10 && sma40 > 0)
+            if (sma5 > sma10 && tradingPairInfo.CurrentPrice > sma40)
             {
                 return TradeAction.Buy;
-            }
-
-            if (tradingPairInfo.CurrentPrice < sma5 && sma5 < sma10)
-            {
-                return TradeAction.Sell;
             }
 
             return TradeAction.Wait;

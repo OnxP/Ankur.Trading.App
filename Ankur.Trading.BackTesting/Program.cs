@@ -18,13 +18,13 @@ namespace Ankur.Trading.BackTesting
             BackTestRequest request = new BackTestRequest
             {
                 // 
-                TradingPairs = new List<string> { "ARNBTC" },
-                From = new DateTime(2019, 02, 05),
-                To = new DateTime(2019, 03, 21),
-                Interval = TimeInterval.Minutes_30,
-                Algorthm = TradingAlgorthm.SimpleSMA,
-                StartAmount = 1m,
-                TradingAmount = 0.5m,
+                TradingPairs = new List<string> { "sysbtc"},
+                From = new DateTime(2020, 01, 29),
+                To = new DateTime(2020, 07, 29),
+                Interval = TimeInterval.Days_1,
+                Algorthm = TradingAlgorthm.Macd,
+                StartAmount = 0.5m,
+                TradingAmount = 0.25m,
                 OrderType = OrderType.LIMIT
             };
 
@@ -45,6 +45,8 @@ namespace Ankur.Trading.BackTesting
             Console.WriteLine($"BTC Finishing Amount: {request.FinalAmount}btc");
             Console.WriteLine($"Total PNL - {request.TradingResults.Sum(x=>x.Pnl)}");
             Console.WriteLine($"Total % profit - {CalculatePercent(request)}");
+            Console.WriteLine($"Win/Loss - Total - {CalculateRatio(request)}");
+
 
             Console.ReadKey();
         }
@@ -55,6 +57,16 @@ namespace Ankur.Trading.BackTesting
             {
                 Console.WriteLine(result.ToString());
             }
+        }
+        public static string CalculateRatio(BackTestRequest request)
+        {
+            double total = request.TradingResults.Count();
+            double win = request.TradingResults.Count(x => x.Pnl > 0);
+            double loss = request.TradingResults.Count(x => x.Pnl < 0);
+
+            //var diff = sum - request.StartAmount;
+            return $"{win}/{loss} {Math.Round((win/total)*100.0,0)}% - {total}";
+
         }
 
         public static decimal CalculatePercent(BackTestRequest request)
@@ -69,7 +81,14 @@ namespace Ankur.Trading.BackTesting
 
         public static void LogTrade(ITradingLog tradingResult)
         {
-            Console.WriteLine($"Pair: {tradingResult.Pair} \t Amount: {tradingResult.Quantity} \t BtcAmount: {tradingResult.BtcQuantity} \t Price:{tradingResult.Price} \t CloseDateTime: {tradingResult.CloseTime.ToString()}");
+            try
+            {
+                Console.WriteLine($"Pair: {tradingResult.Pair} \t Amount: {tradingResult.Quantity} \t BtcAmount: {tradingResult.BtcQuantity} \t Price:{tradingResult.Price} \t CloseDateTime: {tradingResult.CloseTime.ToString()}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 }

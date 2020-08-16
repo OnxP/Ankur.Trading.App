@@ -86,11 +86,13 @@ namespace Ankur.Trading.Core
             Sma.Add(15,new Sma(_candleSticks,15, pair));
             Sma.Add(20,new Sma(_candleSticks,20, pair));
             Sma.Add(40,new Sma(_candleSticks,40, pair));
+            Sma.Add(100,new Sma(_candleSticks,100, pair));
             Ema.Add(5,new Ema(_candleSticks,5, pair));
             Ema.Add(10,new Ema(_candleSticks,10, pair));
             Ema.Add(15,new Ema(_candleSticks,15, pair));
             Ema.Add(20,new Ema(_candleSticks,20, pair));
             Ema.Add(40,new Ema(_candleSticks,40, pair));
+            Ema.Add(80,new Ema(_candleSticks,80, pair));
 
             Gsma.Add(20,new Gsma(_candleSticks,20,10, pair));
 
@@ -101,22 +103,7 @@ namespace Ankur.Trading.Core
 
         public void Add(Candlestick futureCandleStick)
         {
-            _5Min?.Add(futureCandleStick);
-            _15Min?.Add(futureCandleStick);
-            _PartialCandlesticks.Reverse();
-            _PartialCandlesticks.Add(futureCandleStick);
-
-            if (_PartialCandlesticks.Count % ((int) interval / 5) == 0)
-            {
-                futureCandleStick = BuildCandle(_PartialCandlesticks);
-                _PartialCandlesticks.Clear();
-            }
-            else
-            {
-                return;
-            }
-
-            //kdb c = new kdb("localhost", 5000);
+            kdb c = new kdb("localhost", 5000);
             List<Candlestick> list = new List<Candlestick>();
             list.Add(futureCandleStick);
             list.AddRange(_candleSticks);

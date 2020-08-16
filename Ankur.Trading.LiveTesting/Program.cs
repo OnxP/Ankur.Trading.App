@@ -122,10 +122,10 @@ namespace Ankur.Trading.LiveTesting
 
                 From = new DateTime(2018, 08, 30),
                 To = new DateTime(2018, 08, 30),
-                Interval = TimeInterval.Minutes_1,
+                Interval = TimeInterval.Minutes_15,
                 Algorthm = TradingAlgorthm.Macd,
                 StartAmount = 1m,
-                TradingAmount = 0.5m,
+                TradingAmount = 0.1m,
                 OrderType = OrderType.LIMIT
             };
 
