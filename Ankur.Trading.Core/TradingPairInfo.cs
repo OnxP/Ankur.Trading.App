@@ -36,10 +36,11 @@ namespace Ankur.Trading.Core
         {
             this.pair = pair;
             this.interval = interval;
-            this._candleSticks = GetBucketedCandleSticks(interval, candleSticks);
+            //this._candleSticks = GetBucketedCandleSticks(interval, candleSticks);
+            this._candleSticks = candleSticks;
             BuildIndicators();
             //create the 5min candlesticks
-            if (this.interval != TimeInterval.Minutes_5) return;
+            //if (this.interval != TimeInterval.Minutes_5) return;
             //_5Min = new TradingPairInfo(pair, TimeInterval.Minutes_15, candleSticks);
             //_15Min = new TradingPairInfo(pair, TimeInterval.Minutes_30, candleSticks);
         }
@@ -103,7 +104,7 @@ namespace Ankur.Trading.Core
 
         public void Add(Candlestick futureCandleStick)
         {
-            kdb c = new kdb("localhost", 5000);
+            //kdb c = new kdb("localhost", 5000);
             List<Candlestick> list = new List<Candlestick>();
             list.Add(futureCandleStick);
             list.AddRange(_candleSticks);

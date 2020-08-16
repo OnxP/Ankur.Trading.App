@@ -18,13 +18,13 @@ namespace Ankur.Trading.BackTesting
             BackTestRequest request = new BackTestRequest
             {
                 // 
-                TradingPairs = new List<string> { "sysbtc"},
+                TradingPairs = new List<string> { "sysbtc","btcusdt","xrpbtc","neobtc","ltcbtc"},
                 From = new DateTime(2020, 01, 29),
                 To = new DateTime(2020, 07, 29),
-                Interval = TimeInterval.Days_1,
+                Interval = TimeInterval.Minutes_30,
                 Algorthm = TradingAlgorthm.Macd,
-                StartAmount = 0.5m,
-                TradingAmount = 0.25m,
+                StartAmount = 1.0m,
+                TradingAmount = 0.1m,
                 OrderType = OrderType.LIMIT
             };
 

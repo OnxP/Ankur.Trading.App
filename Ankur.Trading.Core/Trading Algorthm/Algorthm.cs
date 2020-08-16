@@ -113,7 +113,7 @@ namespace Ankur.Trading.Core.Trading_Algorthm
 
         }
 
-        private TradeAction Macd(TradingPairInfo tradingPairInfo)
+        private TradeAction Macd_2(TradingPairInfo tradingPairInfo)
         {
             var mcad = tradingPairInfo.macd;
             decimal rsi = tradingPairInfo.rsi.Value;
@@ -127,11 +127,11 @@ namespace Ankur.Trading.Core.Trading_Algorthm
             if (mcad.Value > 0 && rsi < 50 && srsi.Value > 0 && srsi.DValue < 30 && Sma5 > Sma20 && price > Sma20)
                 return TradeAction.Buy;
 
-            if (tradingPairInfo.CurrentPrice < Sma5)
-                return TradeAction.Sell;
+            //if (tradingPairInfo.CurrentPrice < Sma5)
+            //    return TradeAction.Sell;
 
-            if (mcad.Value <= 0 && srsi.Value < 0)
-                return TradeAction.Sell;
+            //if (mcad.Value <= 0 && srsi.Value < 0)
+            //    return TradeAction.Sell;
 
             return TradeAction.Wait;
         }
