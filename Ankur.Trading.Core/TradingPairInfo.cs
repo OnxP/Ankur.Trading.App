@@ -50,6 +50,7 @@ namespace Ankur.Trading.Core
             Ema.Add(15,new Ema(_candleSticks,15, pair));
             Ema.Add(20,new Ema(_candleSticks,20, pair));
             Ema.Add(40,new Ema(_candleSticks,40, pair));
+            Ema.Add(80,new Ema(_candleSticks,80, pair));
 
             Gsma.Add(20,new Gsma(_candleSticks,20,10, pair));
 

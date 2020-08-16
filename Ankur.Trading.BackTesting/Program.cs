@@ -18,13 +18,13 @@ namespace Ankur.Trading.BackTesting
             BackTestRequest request = new BackTestRequest
             {
                 // 
-                TradingPairs = new List<string> { "trxbtc", "sysbtc", "eosbtc", "xrpbtc" },
-                From = new DateTime(2020, 01, 21),
-                To = new DateTime(2020, 07, 20),
-                Interval = TimeInterval.Hours_1,
+                TradingPairs = new List<string> { "sysbtc"},
+                From = new DateTime(2020, 01, 29),
+                To = new DateTime(2020, 07, 29),
+                Interval = TimeInterval.Days_1,
                 Algorthm = TradingAlgorthm.Macd,
-                StartAmount = 1m,
-                TradingAmount = 0.5m,
+                StartAmount = 0.5m,
+                TradingAmount = 0.25m,
                 OrderType = OrderType.LIMIT
             };
 
@@ -65,7 +65,7 @@ namespace Ankur.Trading.BackTesting
             double loss = request.TradingResults.Count(x => x.Pnl < 0);
 
             //var diff = sum - request.StartAmount;
-            return $"{win}/{loss} {Math.Round(win/total)*100,0}% - {total}";
+            return $"{win}/{loss} {Math.Round((win/total)*100.0,0)}% - {total}";
 
         }
 
@@ -81,7 +81,14 @@ namespace Ankur.Trading.BackTesting
 
         public static void LogTrade(ITradingLog tradingResult)
         {
-            Console.WriteLine($"Pair: {tradingResult.Pair} \t Amount: {tradingResult.Quantity} \t BtcAmount: {tradingResult.BtcQuantity} \t Price:{tradingResult.Price} \t CloseDateTime: {tradingResult.CloseTime.ToString()}");
+            try
+            {
+                Console.WriteLine($"Pair: {tradingResult.Pair} \t Amount: {tradingResult.Quantity} \t BtcAmount: {tradingResult.BtcQuantity} \t Price:{tradingResult.Price} \t CloseDateTime: {tradingResult.CloseTime.ToString()}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 }

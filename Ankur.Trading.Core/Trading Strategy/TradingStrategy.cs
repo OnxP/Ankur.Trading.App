@@ -65,10 +65,13 @@ namespace Ankur.Trading.Core.Trading_Strategy
                 if (result.LastPrice <= pos.StopPrice) CloseTrade(result);
                 //move stop loss to be 10 % of profit.
                 var profictPrice = pos.BoughtPrice * 1.15m;
-                var inProfit = pos.InProfit;
-                if (result.LastPrice > profictPrice && !inProfit) pos.StopPrice = pos.BoughtPrice * 1.10m;
+                if (result.LastPrice > profictPrice && !pos.InProfit)
+                {
+                    pos.StopPrice = pos.BoughtPrice * 1.10m;
+                    pos.InProfit = true;
+                }
 
-                if (result.LastPrice > pos.StopPrice * 1.05m && inProfit) pos.StopPrice = pos.StopPrice * 1.04m;
+                if (result.LastPrice > pos.StopPrice * 1.02m && pos.InProfit) pos.StopPrice = pos.StopPrice * 1.01m;
         
                 if (result.Action == TradeAction.Sell) CloseTrade(result);
 
@@ -116,7 +119,7 @@ namespace Ankur.Trading.Core.Trading_Strategy
                 var transactionPair = broker.MakeTransaction(results.Action, results.Ticker, _request.TradingAmount, results.LastPrice);
                 var pos = CurrentPosition.First(x => x.Ticker == ticker);
                 pos.Add(transactionPair.First());
-                pos.StopPrice = results.LastPrice * 0.95m;
+                pos.StopPrice = results.LastPrice * 0.97m;
                 pos.BoughtPrice = results.LastPrice;
                 BtcPosition.Add(transactionPair.Last());
                 Log?.Invoke(new TradingLog(transactionPair,results.CloseDateTime));
@@ -140,7 +143,9 @@ namespace Ankur.Trading.Core.Trading_Strategy
         {
             foreach (Position result in CurrentPosition.Where(x => x.Open && x.Ticker != "btc"))
             {
-                var transactionPair = broker.MakeTransaction(TradeAction.Sell, result.Ticker, result.Quantity, lastPrices[result.Ticker+"btc"]);
+                IEnumerable<Trade> transactionPair;
+                transactionPair = broker.MakeTransaction(TradeAction.Sell, result.Ticker, result.Quantity, result.Ticker.Contains("usd") ? lastPrices["btc" + result.Ticker] : lastPrices[result.Ticker + "btc"]);
+
                 result.Add(transactionPair.First());
                 BtcPosition.Add(transactionPair.Last());
             }

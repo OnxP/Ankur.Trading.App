@@ -100,16 +100,14 @@ namespace Ankur.Trading.Core.Trading_Algorthm
         {
             var sma5 = tradingPairInfo.Ema[5].Value;
             var sma10 = tradingPairInfo.Ema[15].Value;
-            var sma40 = tradingPairInfo.Ema[40].Value;
+            var sma40 = tradingPairInfo.Ema[80].Value;
 
-            if (sma5 > sma10)
+            if (sma5 > sma10 && tradingPairInfo.CurrentPrice > sma40)
             {
                 return TradeAction.Buy;
             }
-            else
-            {
-                return TradeAction.Sell;
-            }
+
+            return TradeAction.Wait;
         }
     }
 }
