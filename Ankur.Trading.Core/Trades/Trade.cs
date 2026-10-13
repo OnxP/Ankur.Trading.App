@@ -3,30 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Binance.API.Csharp.Client.Models.Account;
-using Binance.API.Csharp.Client.Models.Market;
 using Ankur.Trading.Core.Trading_Algorthm;
 
 namespace Ankur.Trading.Core.Trades
 {
     public class Trade
     {
-
-        public Trade(Order result,TradeAction action)
-        {
-            this.Symbol = result.Symbol;
-            this.Time = DateTimeOffset.FromUnixTimeMilliseconds(result.Time).DateTime;
-            this.Quantity = result.ExecutedQty;
-        }
-
         public Trade(string pair, decimal quantity)
-        {
-            this.Symbol = pair;
-            this.Time = DateTime.Now;
-            this.Quantity = quantity;
-        }
-
-        public Trade(string pair,decimal currentPrice,decimal quantity)
         {
             this.Symbol = pair;
             this.Time = DateTime.Now;

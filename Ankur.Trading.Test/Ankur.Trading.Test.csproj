@@ -49,10 +49,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Indicators\EmaTest.cs" />
-    <Compile Include="Indicators\MaComparisioncs.cs" />
+    <Compile Include="Indicators\MAComparisioncs.cs" />
     <Compile Include="Indicators\RsiTest.cs" />
     <Compile Include="Indicators\SmaTest.cs" />
     <Compile Include="Indicators\StochRsiTest.cs" />
+    <Compile Include="Trading\TradingStrategyTests.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -67,6 +68,10 @@
     <ProjectReference Include="..\Binance\Binance.API.Csharp.Client.Models\Binance.API.Csharp.Client.Models.csproj">
       <Project>{7CF40EB8-D81D-40B5-B849-17E5662175D6}</Project>
       <Name>Binance.API.Csharp.Client.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Binance\Binance.API.Csharp.Client\Binance.API.Csharp.Client.csproj">
+      <Project>{EC2A020E-338A-46EE-9D08-C158CBD49C92}</Project>
+      <Name>Binance.API.Csharp.Client</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

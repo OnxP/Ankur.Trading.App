@@ -44,33 +44,11 @@ namespace Ankur.Trading.Core.Trading_Algorthm
             return result;
         }
 
-        private TradeAction MacdAndRsi(TradingPairInfo tradingPairInfo)
-        {
-            var mcad = tradingPairInfo.macd;
-            decimal rsi = tradingPairInfo.rsi.Value;
-            var srsi = tradingPairInfo.stochRsi;
-            var Sma5 = tradingPairInfo.Ema[5].Value;
-            var Sma20 = tradingPairInfo.Ema[20].Value;
-            var Sma100 = tradingPairInfo.Ema[20].Value;
-            var Gsma20 = tradingPairInfo.Gsma[20].Value;
-
-            if (mcad.Value > 0 && rsi < 50 && srsi.Value > 0 && Sma5 > Sma20 && Gsma20>0)
-                return TradeAction.Buy;
-
-            if (((Sma5 - Sma20 )/ Sma20) >= 40m)
-                return TradeAction.Sell;
-
-            if (mcad.Value <= 0 && srsi.Value<0 && rsi>80)
-                return TradeAction.Sell;
-
-            return TradeAction.Wait;
-        }
-
         private TradeAction Macd(TradingPairInfo tradingPairInfo)
         {
             var mcad = tradingPairInfo.macd;
             var Sma100 = tradingPairInfo.Sma[100].Value;
-            var Sma100gradient = tradingPairInfo.Sma[100].averageGradient;
+            var Sma100gradient = tradingPairInfo.Sma[100].GradientVsRecentAverage;
             var currentPrice = tradingPairInfo.CurrentPrice;
 
             if (mcad.Value > 0 && Sma100 > currentPrice && Sma100gradient > 0)

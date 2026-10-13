@@ -8,12 +8,13 @@ using Ankur.Trading.Core.Indicators.Oscillator;
 using Ankur.Trading.Core.Oscillator;
 using System;
 using Ankur.Trading.Core.Indicators.Ma;
-using kx;
 
 namespace Ankur.Trading.Core
 {
     public class TradingPairInfo
     {
+        //the indicators keep their own history, only the latest candlesticks are needed here.
+        private const int MaxCandleSticks = 100;
         private string pair;
         private TimeInterval interval;
         public IEnumerable<Candlestick> _candleSticks;
@@ -61,32 +62,25 @@ namespace Ankur.Trading.Core
 
         public void Add(Candlestick futureCandleStick)
         {
-            //kdb c = new kdb("localhost", 5000);
-            List<Candlestick> list = new List<Candlestick>();
-            list.Add(futureCandleStick);
-            list.AddRange(_candleSticks);
+            //newest first, capped so the list doesn't grow with every candle.
+            var list = new List<Candlestick>(MaxCandleSticks) { futureCandleStick };
+            list.AddRange(_candleSticks.Take(MaxCandleSticks - 1));
             _candleSticks = list;
             foreach (KeyValuePair<int, Sma> keyValuePair in Sma)
             {
                 keyValuePair.Value.AddCandleStick(futureCandleStick);
-                //c.k($"insert[`MA](`{pair};\"Z\"$ \"{futureCandleStick.OpenDateTime:yyyy-MM-ddTHH:mm:ss:fffff}\"; `SMA; {keyValuePair.Key.ToString()}; \"f\"${keyValuePair.Value.Value})");
             }
             foreach (KeyValuePair<int, Ema> keyValuePair in Ema)
             {
                 keyValuePair.Value.AddCandleStick(futureCandleStick);
-               // c.k($"insert[`MA](`{pair};\"Z\"$ \"{futureCandleStick.OpenDateTime:yyyy-MM-ddTHH:mm:ss:fffff}\"; `EMA;{keyValuePair.Key.ToString()}; \"f\"${keyValuePair.Value.Value})");
             }
             foreach (KeyValuePair<int, Gsma> keyValuePair in Gsma)
             {
                 keyValuePair.Value.AddCandleStick(futureCandleStick);
-                //c.k($"insert[`MA](`{pair};\"Z\"$ \"{futureCandleStick.OpenDateTime:yyyy-MM-ddTHH:mm:ss:fffff}\"; `GSMA; {keyValuePair.Key.ToString()}; \"f\"${keyValuePair.Value.Value*10000000000})");
             }
             stochRsi.AddCandleStick(futureCandleStick);
-            //c.k($"insert[`Oscillator](`{pair};\"Z\"$ \"{futureCandleStick.OpenDateTime:yyyy-MM-ddTHH:mm:ss:fffff}\"; `SRSI; \"f\"${ stochRsi.KValue};\"f\"${stochRsi.DValue})");
             rsi.AddCandleStick(futureCandleStick);
-            //c.k($"insert[`Oscillator](`{pair};\"Z\"$ \"{futureCandleStick.OpenDateTime:yyyy-MM-ddTHH:mm:ss:fffff}\"; `RSI; \"f\"${ rsi.Value};0.0)");
             macd.AddCandleStick(futureCandleStick);
-            //c.k($"insert[`Oscillator](`{pair};\"Z\"$ \"{futureCandleStick.OpenDateTime:yyyy-MM-ddTHH:mm:ss:fffff}\"; `MACD; \"f\"${ macd.MacdLine.First()*100000000};\"f\"${macd.SignalLine.First()*100000000})");
         }
     }
 }

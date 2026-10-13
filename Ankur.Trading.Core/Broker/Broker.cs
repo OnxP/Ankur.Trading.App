@@ -27,16 +27,16 @@ namespace Ankur.Trading.Core.Broker
         }
 
         //return the breakdown of the transaction into individual legs.
-        //quantity is always in BTC.
+        //a buy's quantity is the BTC to spend, a sell's quantity is the coins to sell.
         internal IEnumerable<Trade> MakeTransaction(TradeAction action,string ticker,decimal quantity,decimal lastPrice = 0m)
         {
-            var btcQuantity = action == TradeAction.Buy ? -quantity : CalculateBtcQuantity(lastPrice,quantity);
-            var localQuantity = action == TradeAction.Buy ? CalculateQuantity(lastPrice, quantity) : -quantity;
+            var isBuy = action == TradeAction.Buy;
+            var btcQuantity = isBuy ? -quantity : CalculateBtcQuantity(lastPrice,quantity);
+            var localQuantity = isBuy ? CalculateQuantity(lastPrice, quantity) : -quantity;
             var list = new List<Trade>();
             if (TestTrade)
             {
                 //can't get the latest price for back testing, need to use the close price from the last candle
-                //list.Add(new Trade(Ticker, lastPrice, action == TradeAction.Buy ? CalculateQuantity(lastPrice, quantity) : -quantity,action));
                 //paired transaction
                 var trade = new Trade(ticker, localQuantity);
                 var btcTrade = new Trade("btc", btcQuantity);
@@ -46,10 +46,18 @@ namespace Ankur.Trading.Core.Broker
                 list.Add(btcTrade);
             }
             else
-            {   //goes to binance and places the transaction.
-                var newOrder = binanceClient.PostNewOrder(ticker, quantity, 0m, action == TradeAction.Buy ? OrderSide.BUY : OrderSide.SELL, OrderType.MARKET).Result;
-                var Order = binanceClient.GetOrder(ticker, newOrder.OrderId).Result;
-                list.Add( new Trade(Order,action));
+            {   //goes to binance and places a market order, which is always sized in coins.
+                var orderQuantity = isBuy ? localQuantity : -localQuantity;
+                var newOrder = binanceClient.PostNewOrder(ticker, orderQuantity, 0m, isBuy ? OrderSide.BUY : OrderSide.SELL, OrderType.MARKET).Result;
+                var order = binanceClient.GetOrder(ticker, newOrder.OrderId).Result;
+
+                //binance only reports the executed coins, so the BTC leg is estimated at the last price.
+                var coins = isBuy ? order.ExecutedQty : -order.ExecutedQty;
+                var trade = new Trade(ticker, coins);
+                var btcTrade = new Trade("btc", Math.Round(-coins * lastPrice, 6));
+                trade.CounterTrade = btcTrade;
+                list.Add(trade);
+                list.Add(btcTrade);
             }
             return list;
         }
