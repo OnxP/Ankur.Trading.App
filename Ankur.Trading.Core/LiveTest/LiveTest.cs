@@ -48,17 +48,20 @@ namespace Ankur.Trading.Core.LiveTest
                     Thread.Sleep(1000);
                 }
 
-                lastCandle = LoadNextCandleSticks();
+                lastCandle = LoadNextCandleSticks(lastCandle);
             }
         }
 
-        private DateTime LoadNextCandleSticks()
+        //returns the close time of the newest candle, or the previous close time if binance returned nothing.
+        private DateTime LoadNextCandleSticks(DateTime previousCandle)
         {
             var candlesticks = new Dictionary<string, List<Candlestick>>();
             foreach (var ticker in _request.TradingPairs)
             {
                 candlesticks.Add(ticker, BinanceClient.GetCandleSticks(ticker, _request.Interval,null,null, 1).Result.ToList());
             }
+            if (candlesticks.Values.Any(x => x.Count == 0)) return previousCandle;
+
             int count = candlesticks.First().Value.Count();
             var lastCandle = candlesticks.First().Value[0].CloseDateTime;
             for (int i = 0; i < count; i++)
@@ -112,28 +115,6 @@ namespace Ankur.Trading.Core.LiveTest
                     return new DateTime();
 
             }
-        }
-
-        private DateTime LoadCandleSticksPerTicker(DateTime from, DateTime dt)
-        {
-            var candlesticks = new Dictionary<string, List<Candlestick>>();
-            foreach (var ticker in _request.TradingPairs)
-            {
-                candlesticks.Add(ticker, BinanceClient.GetCandleSticks(ticker, _request.Interval, from, dt,10).Result.ToList());
-            }
-            int count = candlesticks.First().Value.Count();
-            var lastCandle = candlesticks.First().Value[0].CloseDateTime;
-            for (int i = 0; i < count; i++)
-            {
-                var CandleSticksByTime = new Dictionary<string, Candlestick>();
-                foreach (var kvp in candlesticks)
-                {
-                    CandleSticksByTime.Add(kvp.Key, kvp.Value[i]);
-                }
-                CandleSticks.Enqueue(CandleSticksByTime);
-            }
-
-            return lastCandle;
         }
     }
 }

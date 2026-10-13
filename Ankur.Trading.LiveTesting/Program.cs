@@ -137,7 +137,7 @@ namespace Ankur.Trading.LiveTesting
             backTest.Log += LogTrade;
             //TODO make this process ASYNC.
             Console.WriteLine($"Starting Amount: {request.StartAmount}btc");
-            backTest.StartTrading();
+            backTest.StartTrading().Wait();
             backTest.FinishTrading();
             Console.WriteLine($"StartTime: {backTest.StartTime} FinishTime: {backTest.FinishTime}");
 

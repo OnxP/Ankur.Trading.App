@@ -63,7 +63,7 @@ namespace Ankur.Trading.Core.Trading
             return candlesticks;
         }
 
-        public async void StartTrading()
+        public async Task StartTrading()
         {
             StartTime = _request.From;
             //First Load data 100 candles starting from the FROM date.
@@ -78,12 +78,23 @@ namespace Ankur.Trading.Core.Trading
             }
 
             await task;
-            
+
         }
 
         private Task<bool> LoadCandleSticks()
         {
-            return new Task<bool>(LoadAllCandleSticks);
+            //mark the load as finished even when it throws, so the processing loop stops waiting for candles.
+            return new Task<bool>(() =>
+            {
+                try
+                {
+                    return LoadAllCandleSticks();
+                }
+                finally
+                {
+                    CandleSticksLoaded = true;
+                }
+            });
         }
 
         public abstract bool LoadAllCandleSticks();

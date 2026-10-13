@@ -36,7 +36,7 @@ namespace Ankur.Trading.BackTesting
             backTest.Log += LogTrade;
             //TODO make this process ASYNC.
             Console.WriteLine($"Starting Amount: {request.StartAmount}btc");
-            backTest.StartTrading();
+            backTest.StartTrading().Wait();
             backTest.FinishTrading();
             Console.WriteLine($"StartTime: {backTest.StartTime} FinishTime: {backTest.FinishTime}");
 
@@ -63,10 +63,9 @@ namespace Ankur.Trading.BackTesting
             double total = request.TradingResults.Count();
             double win = request.TradingResults.Count(x => x.Pnl > 0);
             double loss = request.TradingResults.Count(x => x.Pnl < 0);
+            if (total == 0) return "0/0 0% - 0";
 
-            //var diff = sum - request.StartAmount;
             return $"{win}/{loss} {Math.Round((win/total)*100.0,0)}% - {total}";
-
         }
 
         public static decimal CalculatePercent(BackTestRequest request)
@@ -81,14 +80,7 @@ namespace Ankur.Trading.BackTesting
 
         public static void LogTrade(ITradingLog tradingResult)
         {
-            try
-            {
-                Console.WriteLine($"Pair: {tradingResult.Pair} \t Amount: {tradingResult.Quantity} \t BtcAmount: {tradingResult.BtcQuantity} \t Price:{tradingResult.Price} \t CloseDateTime: {tradingResult.CloseTime.ToString()}");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+            Console.WriteLine($"Pair: {tradingResult.Pair} \t Amount: {tradingResult.Quantity} \t BtcAmount: {tradingResult.BtcQuantity} \t Price:{tradingResult.Price} \t CloseDateTime: {tradingResult.CloseTime.ToString()}");
         }
     }
 }

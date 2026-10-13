@@ -22,9 +22,7 @@ namespace Ankur.Trading.Core.Trading_Strategy
     {
         private IRequest _request;
         private List<Position> CurrentPosition { get; set; }
-        public List<Trades.Trades> Trades { get; set; }
         private Broker.Broker broker { get; set; }
-        private IList<Position> positionHistory { get; set; }
         private Position BtcPosition => CurrentPosition.First(c => c.Ticker == "btc");
         public decimal CurrentBtcAmount => BtcPosition.Quantity;
 
@@ -35,7 +33,6 @@ namespace Ankur.Trading.Core.Trading_Strategy
             broker = new Broker.Broker(binanceClient,request);
             _request = request;
             CurrentPosition = new List<Position>();
-            Trades = new List<Trades.Trades>();
             var btcPosition = new Position("btc",0);
             btcPosition.Add(new Trade("btc", _request.StartAmount));
             CurrentPosition.Add(btcPosition);
@@ -46,7 +43,7 @@ namespace Ankur.Trading.Core.Trading_Strategy
                 if (pos.Count() > 0) continue;
                 CurrentPosition.Add(new Position(ccy,0));
             }
-            
+
         }
 
         public void Process(IEnumerable<IAlgorthmResults> analysisResults)
@@ -54,53 +51,48 @@ namespace Ankur.Trading.Core.Trading_Strategy
             foreach (IAlgorthmResults result in analysisResults)
             {
                 var pos = CurrentPosition.First(x => x.Ticker == result.Ticker.Replace("btc", ""));
-                if (!pos.Open && result.Action == TradeAction.Buy)
+                if (!pos.Open)
                 {
-                    CreateTrade(result);
+                    if (result.Action == TradeAction.Buy) CreateTrade(result);
                     continue;
                 }
-                if (!pos.Open) continue;
 
-                //check stop loss.
-                if (result.LastPrice <= pos.StopPrice) CloseTrade(result);
-                //move stop loss to be 10 % of profit.
-                var profictPrice = pos.BoughtPrice * 1.15m;
-                if (result.LastPrice > profictPrice && !pos.InProfit)
+                //check stop loss against the candle's low so moves through the stop inside the candle are caught.
+                //a gap below the stop fills at the open, otherwise the stop price is hit.
+                var low = result.Candlestick?.Low ?? result.LastPrice;
+                var open = result.Candlestick?.Open ?? result.LastPrice;
+                if (low <= pos.StopPrice)
+                {
+                    CloseTrade(result, Math.Min(open, pos.StopPrice));
+                    continue;
+                }
+
+                //move stop loss to 10% above the buy price once the position is 15% in profit.
+                if (result.LastPrice > pos.BoughtPrice * 1.15m && !pos.InProfit)
                 {
                     pos.StopPrice = pos.BoughtPrice * 1.10m;
                     pos.InProfit = true;
                 }
 
-                if (result.LastPrice > pos.StopPrice * 1.02m && pos.InProfit) pos.StopPrice = pos.StopPrice * 1.01m;
-        
-                if (result.Action == TradeAction.Sell) CloseTrade(result);
+                //trail the stop up 1% at a time while price is more than 2% above it.
+                if (pos.InProfit && result.LastPrice > pos.StopPrice * 1.02m) pos.StopPrice *= 1.01m;
 
+                if (result.Action == TradeAction.Sell) CloseTrade(result, result.LastPrice);
             }
         }
 
         public IEnumerable<ITradingResult> TradingResults()
         {
-            //assume buy and sell pairs are store next to each other in the list.
+            //buy and sell legs are stored next to each other in the list, an unmatched trailing leg is ignored.
             var list = new List<ITradingResult>();
             foreach (var position in CurrentPosition.Where(x=>x.Ticker!="btc"))
             {
-                var trades = position.Trades.ToList();
-                for (int i = 0; i < trades.Count(); i++)
+                var trades = position.Trades;
+                for (int i = 0; i + 1 < trades.Count; i += 2)
                 {
-                    try
-                    {
-                        list.Add(new TradingResult(trades[i], trades[++i]));
-                    }
-                    catch{}
-                } }
-                
-            //for(int i =1; i<CurrentPosition.Trades.Count;i+=2)
-            //{
-            //    var buyTrade = CurrentPosition.Trades[i - 1];
-            //    var sellTrade = CurrentPosition.Trades[i];
-
-            //    list.Add(new TradingResult(buyTrade,sellTrade));
-            //}
+                    list.Add(new TradingResult(trades[i], trades[i + 1]));
+                }
+            }
             return list;
         }
 
@@ -116,23 +108,25 @@ namespace Ankur.Trading.Core.Trading_Strategy
             //check BTC amount.
             if (BtcPosition.Open && BtcPosition.Quantity >= _request.TradingAmount)
             {
-                var transactionPair = broker.MakeTransaction(results.Action, results.Ticker, _request.TradingAmount, results.LastPrice);
+                var transactionPair = broker.MakeTransaction(TradeAction.Buy, results.Ticker, _request.TradingAmount, results.LastPrice);
                 var pos = CurrentPosition.First(x => x.Ticker == ticker);
                 pos.Add(transactionPair.First());
                 pos.StopPrice = results.LastPrice * 0.97m;
                 pos.BoughtPrice = results.LastPrice;
+                pos.InProfit = false;
                 BtcPosition.Add(transactionPair.Last());
                 Log?.Invoke(new TradingLog(transactionPair,results.CloseDateTime));
             }
         }
 
-        public void CloseTrade(IAlgorthmResults results)
+        //always a sell: the stop loss and the algorithm's sell signal both exit the whole position.
+        private void CloseTrade(IAlgorthmResults results, decimal price)
         {
             var ticker = results.Ticker.Replace("btc", "");
             var position = CurrentPosition.First(x => x.Ticker == ticker);
             if (position.Open)
             {
-                var transactionPair = broker.MakeTransaction(results.Action, results.Ticker, position.Quantity, results.LastPrice);
+                var transactionPair = broker.MakeTransaction(TradeAction.Sell, results.Ticker, position.Quantity, price);
                 position.Add(transactionPair.First());
                 BtcPosition.Add(transactionPair.Last());
                 Log?.Invoke(new TradingLog(transactionPair, results.CloseDateTime));
@@ -149,11 +143,6 @@ namespace Ankur.Trading.Core.Trading_Strategy
                 result.Add(transactionPair.First());
                 BtcPosition.Add(transactionPair.Last());
             }
-        }
-
-        public void WaitAction(IAlgorthmResults results)
-        {
-
         }
     }
 }
